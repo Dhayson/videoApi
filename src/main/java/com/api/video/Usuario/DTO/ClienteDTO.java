@@ -1,13 +1,19 @@
 package com.api.video.Usuario.DTO;
 
+import java.time.LocalDate;
+
 public class ClienteDTO {
 
     private String nome;
     private String email;
     private String senha;
     private String cpf;
+    private LocalDate dataDeNascimento;
+    private String tipoCliente;
+    private String plataformas;
 
     // Getters e Setters
+
     public String getNome() {
         return nome;
     }
@@ -38,5 +44,29 @@ public class ClienteDTO {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public LocalDate getDataDeNascimento() {
+        return dataDeNascimento;
+    }
+
+    public void setDataDeNascimento(LocalDate dataDeNascimento) {
+        this.dataDeNascimento = dataDeNascimento;
+    }
+
+    public String getTipoCliente() {
+        return tipoCliente;
+    }
+
+    public void setTipoCliente(String tipoCliente) {
+        this.tipoCliente = tipoCliente;
+    }
+
+    public String getPlataformas() {
+        return plataformas;
+    }
+
+    public void setPlataformas(String plataformas) {
+        this.plataformas = plataformas;
     }
 }

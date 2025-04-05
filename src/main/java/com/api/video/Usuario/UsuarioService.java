@@ -4,6 +4,7 @@ import com.api.video.Cliente.Cliente;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +30,6 @@ public class UsuarioService {
                 }
             }
         }
-
         return Optional.empty();
     }
 
@@ -42,14 +42,16 @@ public class UsuarioService {
 
             if (usuario.getCliente() != null) {
                 Cliente cliente = usuario.getCliente();
-                informacoes.add(cliente.getNomeCliente());
-                informacoes.add(cliente.getEmailCliente());
+                informacoes.add(cliente.getNome());
+                informacoes.add(cliente.getEmail());
                 informacoes.add("cliente");
-                informacoes.add(cliente.getCpfCliente());
+                informacoes.add(cliente.getCpf());
+                informacoes.add(cliente.getDataDeNascimento() != null ? cliente.getDataDeNascimento().toString() : "");
+                informacoes.add(cliente.getTipoCliente());
+                informacoes.add(cliente.getPlataformas());
                 return Optional.of(informacoes);
             }
         }
-
         return Optional.empty();
     }
 
@@ -58,18 +60,20 @@ public class UsuarioService {
     }
 
     @Transactional
-    public boolean cadastrarCliente(String nome, String email, String senha, String cpf) {
+    public boolean cadastrarCliente(String nome, String email, String senha, String cpf, LocalDate dataDeNascimento, String plataformas) {
         try {
-
             UUID idUsuario = UUID.randomUUID();
-            usuarioRepository.inserirUsuario(idUsuario, "cliente");
-            usuarioRepository.cadastrarClienteComUsuario(idUsuario, nome, email, senha, cpf);
+            // Insere o usuário com tipo "cliente", email e senha
+            usuarioRepository.inserirUsuario(idUsuario, "cliente", email, senha);
+            // Insere o cliente com os campos completos
+            usuarioRepository.cadastrarClienteComUsuario(idUsuario, nome, email, senha, cpf, dataDeNascimento, "cliente", plataformas);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
+
 
     public boolean editarDadosCliente(String nome, String email, String senha, String cpf) {
         return usuarioRepository.editarDadosCliente(nome, email, senha, cpf) > 0;

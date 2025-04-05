@@ -5,7 +5,7 @@ spring:
     name: video
 
   datasource:
-    url: jdbc:postgresql://198.74.53.107:5432/videoapi
+    url: jdbc:postgresql://198.74.53.107:5432/video
     username: lk
     password: password_lk
     driver-class-name: org.postgresql.Driver

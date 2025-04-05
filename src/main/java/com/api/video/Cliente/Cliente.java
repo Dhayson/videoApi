@@ -3,7 +3,7 @@ package com.api.video.Cliente;
 import com.api.video.Usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.*;
-
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -20,18 +20,28 @@ public class Cliente {
     private UUID id;
 
     @Column(nullable = false)
-    private String nomeCliente;
+    private String nome;
 
     @Column(nullable = false, unique = true)
-    private String emailCliente;
+    private String email;
 
     @Column(nullable = false)
     private String senha;
 
     @Column(nullable = false, unique = true)
-    private String cpfCliente;
+    private String cpf;
+
+    @Column(nullable = false)
+    private LocalDate dataDeNascimento;
+
+    @Column(nullable = false)
+    private String tipoCliente;
+
+    @Column
+    private String plataformas;
 
     @OneToOne
-    @JoinColumn(name = "id", referencedColumnName = "id")
+    @MapsId
+    @JoinColumn(name = "id")
     private Usuario usuario;
 }
