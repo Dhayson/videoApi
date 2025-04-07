@@ -18,10 +18,11 @@ public interface SessaoRepository extends JpaRepository<Sessao, UUID> {
     @Transactional
     @Modifying
     @Query(value = """
-        INSERT INTO sessao (id, id_usuario, chave_sessao, horario_login, expired)
-        VALUES (:id, :idUsuario, :chaveSessao, CURRENT_TIMESTAMP, false)
+        INSERT INTO sessao (id, id_usuario, chave_sessao, chave_token, horario_login, expired)
+        VALUES (:id, :idUsuario, :chaveSessao, :chaveToken, :currentTime, false)
     """, nativeQuery = true)
-    void registrarSessao(@Param("id") UUID id, @Param("idUsuario") UUID idUsuario, @Param("chaveSessao") String chaveSessao);
+    void registrarSessao(@Param("id") UUID id, @Param("idUsuario") UUID idUsuario, @Param("chaveSessao") String chaveSessao,
+                         @Param("chaveToken") String chaveToken, @Param("currentTime") LocalDateTime currentTime);
 
     @Query("""
         SELECT s.expired

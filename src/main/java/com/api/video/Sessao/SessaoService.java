@@ -48,9 +48,9 @@ public class SessaoService {
         }
 
         String chaveSessao = UUID.randomUUID().toString();
+        String chaveToken = UUID.randomUUID().toString();
         UUID idSessao = UUID.randomUUID();
-
-        sessaoRepository.registrarSessao(idSessao, idUsuario, chaveSessao);
+        sessaoRepository.registrarSessao(idSessao, idUsuario, chaveSessao, chaveToken, LocalDateTime.now());
         return chaveSessao;
     }
 
