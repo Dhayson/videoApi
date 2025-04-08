@@ -330,17 +330,17 @@ async function testarEditarProjeto() {
 // Chamar a função de teste para executar a criação de projeto
 // await testarCriarProjeto();
 
-// // Chamar a função de teste para executar a deleção de projeto
+// // // Chamar a função de teste para executar a deleção de projeto
 // await testarDeletarProjeto();
 
-// // Chamar a função de teste para executar a listagem de projetos
+// // // Chamar a função de teste para executar a listagem de projetos
 // await testarListarProjetos();
 
-// // Chamar a função de teste para executar a edição de projeto
+// // // Chamar a função de teste para executar a edição de projeto
 // await testarEditarProjeto();
 
-export { criarProjeto, editarProjeto, listarProjetosDoUsuario, deletarProjeto };
-
-// Descomente isso para testar com o node
+// // Descomente isso para testar com o node
 // import LocalStorage from "node-localstorage";
 // const localStorage = new LocalStorage.LocalStorage("./scratch");
+
+export { criarProjeto, editarProjeto, listarProjetosDoUsuario, deletarProjeto };

@@ -10,7 +10,7 @@ import { Logo } from "@/components/logo"
 import { ProjectCard } from "@/components/project-card"
 import { MainLayout } from "@/components/main-layout"
 import React, { useEffect } from "react"
-import { listarProjetosDoUsuario, deletarProjeto } from "../../endpoints/projetos"
+import { listarProjetosDoUsuario, deletarProjeto } from "../../endpoints/projetos.js"
 import {clientInfo} from "../../endpoints/login"
 
 // Um projeto também pode conter uma url de vídeo, a ser tocado na página
