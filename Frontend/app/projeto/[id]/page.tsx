@@ -10,11 +10,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
 import { MainLayout } from "@/components/main-layout"
 import { VideoWithFeedback } from "@/components/video-with-feedback"
-import { criarTask, deletarTask} from "../../../endpoints/tasks"
+import { criarTask, deletarTask, listarTasksPorProjeto} from "../../../endpoints/tasks"
+import { } from "../../../endpoints/projetos.js"
 
 const mockTasks = [
-  { id: 1, name: "Nome da task 1", date: "10/07/2023", status: "active" },
-  { id: 2, name: "Nome da task 2", date: "11/07/2023", status: "active" },
+  { id: 1, titulo: "Nome da task 1", date: "10/07/2023", status: "active" },
+  { id: 2, titulo: "Nome da task 2", date: "11/07/2023", status: "active" },
 ]
 
 const initialFeedbacks = [
@@ -37,6 +38,7 @@ const mockAlteracoes = [
 
 export default function ProjetoPage() {
   const [projectId, setProjectId] = useState("")
+  const [projectUrl, setProjectUrl] = useState("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
   const [searchTerm, setSearchTerm] = useState("")
   const [tasks, setTasks] = useState(mockTasks)
   const [alteracoes, setAlteracoes] = useState(mockAlteracoes)
@@ -58,6 +60,7 @@ export default function ProjetoPage() {
     )
     console.log(Resposta)
     setMostrarForm(false)
+    window.location.reload();
   };
 
   const [titulo, setTitulo] = useState('');
@@ -66,7 +69,7 @@ export default function ProjetoPage() {
   const [prioridade, setPrioridade] = useState('MEDIUM');
   const [dataEntrega, setDataEntrega] = useState('');
 
-  const filteredTasks = tasks.filter((task) => task.name.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredTasks = tasks.filter((task) => task.titulo.toLowerCase().includes(searchTerm.toLowerCase()))
 
   useEffect(() => {
     // Essa função roda uma vez, quando o componente monta (inicializa)
@@ -74,11 +77,20 @@ export default function ProjetoPage() {
     const partes = path.split('/');
     const id = partes[2];
     setProjectId(id);
-    console.log(id)
+    console.log(id);
+
+    // const dados_proj = 
+    listarTasksPorProjeto(id).then(
+      res => {
+        setTasks(res.data)
+        console.log(res)
+      }
+    )
   }, []); // <- Array com id
 
   const handleRemoveTask = (id: number) => {
     setTasks(tasks.filter((task) => task.id !== id))
+    deletarTask(id)
   }
 
   const [mostrarForm, setMostrarForm] = useState(false);
@@ -168,15 +180,15 @@ export default function ProjetoPage() {
           <CardContent>
             <div className="grid grid-cols-4 text-sm font-medium text-gray-500 mb-2">
               <div className="col-span-2">Nome da Task</div>
-              <div className="text-center">date</div>
+              <div className="text-center">Data de entrega</div>
               <div className="text-center">Status</div>
             </div>
 
             <div className="scroll-slim max-h-[610px] overflow-y-auto space-y-2 pr-1">
               {filteredTasks.map((task) => (
                 <div key={task.id} className="grid grid-cols-4 items-center py-2 border-b border-gray-100">
-                  <div className="col-span-2 text-sm">{task.name}</div>
-                  <div className="text-center text-sm">{task.date}</div>
+                  <div className="col-span-2 text-sm">{task.titulo}</div>
+                  <div className="text-center text-sm">{task.dataEntrega}</div>
                   <div className="flex justify-center items-center space-x-2">
                     <div className={`h-4 w-4 rounded-full ${task.status === "active" ? "bg-blue-500" : "bg-gray-500"}`} />
                     <button onClick={() => handleRemoveTask(task.id)} className="text-gray-400 hover:text-red-500">
@@ -203,7 +215,7 @@ export default function ProjetoPage() {
             </CardHeader>
             <CardContent>
               <div className="aspect-video bg-black rounded-md overflow-hidden mb-4">
-                <VideoWithFeedback ref={videoRef} src="https://www.w3schools.com/html/mov_bbb.mp4" feedbacks={feedbacks} />
+                <VideoWithFeedback ref={videoRef} src={projectUrl} feedbacks={feedbacks} />
               </div>
 
               <div className="mt-6 space-y-2">
