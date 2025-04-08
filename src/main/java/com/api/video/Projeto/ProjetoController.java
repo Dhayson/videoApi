@@ -15,58 +15,51 @@ public class ProjetoController {
     @Autowired
     private ProjetoService projetoService;
 
-    /**
-     * DTO simples para receber dados de criação/edição do projeto
-     */
     public static class ProjetoDTOBuilder {
         private String nome;
         private String descricao;
+        private String urlVideo;
 
-        // Getters e Setters
-        public String getNome() {
-            return nome;
-        }
-        public void setNome(String nome) {
-            this.nome = nome;
-        }
-        public String getDescricao() {
-            return descricao;
-        }
-        public void setDescricao(String descricao) {
-            this.descricao = descricao;
-        }
+        // getters e setters
+        public String getNome() { return nome; }
+        public void setNome(String nome) { this.nome = nome; }
+
+        public String getDescricao() { return descricao; }
+        public void setDescricao(String descricao) { this.descricao = descricao; }
+
+        public String getUrlVideo() { return urlVideo; }
+        public void setUrlVideo(String urlVideo) { this.urlVideo = urlVideo; }
     }
 
-    /**
-     * Cria um projeto novo.
-     * Exemplo de requisição:
-     *  POST /projetos
-     *  Header: chaveSessao=...
-     *  Body JSON: { "nome": "...", "descricao": "..." }
-     */
     @PostMapping("/criar")
     public ResponseEntity<String> criarProjeto(
             @RequestHeader("chaveSessao") String chaveSessao,
             @RequestBody ProjetoDTOBuilder dto) {
-        UUID projetoId = projetoService.criarProjeto(chaveSessao, dto.getNome(), dto.getDescricao());
+        UUID projetoId = projetoService.criarProjeto(
+                chaveSessao,
+                dto.getNome(),
+                dto.getDescricao(),
+                dto.getUrlVideo()  // <-- Passa para o service
+        );
         return ResponseEntity.ok("Projeto criado com sucesso! ID: " + projetoId);
     }
 
-    /**
-     * Edita o nome e descrição de um projeto.
-     * Exemplo de requisição:
-     *  PUT /projetos/{id}
-     *  Header: chaveSessao=...
-     *  Body JSON: { "nome": "...", "descricao": "..." }
-     */
+
     @PutMapping("/{id}")
     public ResponseEntity<String> editarProjeto(
             @RequestHeader("chaveSessao") String chaveSessao,
             @PathVariable("id") UUID id,
             @RequestBody ProjetoDTO dto) {
-        projetoService.editarProjeto(chaveSessao, id, dto.getNome(), dto.getDescricao());
+        projetoService.editarProjeto(
+                chaveSessao,
+                id,
+                dto.getNome(),
+                dto.getDescricao(),
+                dto.getUrlVideo()  // <-- Inclui o novo campo
+        );
         return ResponseEntity.ok("Projeto atualizado com sucesso!");
     }
+
 
     /**
      * Deleta um projeto e suas associações (tasks, alterações, etc).

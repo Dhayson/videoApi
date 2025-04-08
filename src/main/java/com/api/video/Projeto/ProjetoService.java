@@ -27,7 +27,7 @@ public class ProjetoService {
      * Cria um novo projeto.
      * Utiliza o UUID do cliente retornado por verificarSessao(chaveSessao).
      */
-    public UUID criarProjeto(String chaveSessao, String nome, String descricao) {
+    public UUID criarProjeto(String chaveSessao, String nome, String descricao, String urlVideo) {
         Optional<UUID> clienteIdOpt = sessaoService.verificarSessao(chaveSessao);
         if (clienteIdOpt.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sessão inválida ou expirada.");
@@ -39,8 +39,9 @@ public class ProjetoService {
                 projetoId,
                 nome,
                 descricao,
-                LocalDate.now(), // data de criação
-                clienteId       // ID do cliente
+                LocalDate.now(),
+                clienteId,
+                urlVideo   // <-- Novo parâmetro
         );
 
         if (rows > 0) {
@@ -51,22 +52,20 @@ public class ProjetoService {
         }
     }
 
-    /**
-     * Edita um projeto (nome e descrição).
-     * Opcionalmente, você pode verificar se o clienteId da sessão
-     * realmente é dono do projeto antes de atualizar.
-     */
-    public void editarProjeto(String chaveSessao, UUID projetoId, String nome, String descricao) {
+
+    public void editarProjeto(String chaveSessao, UUID projetoId, String nome, String descricao, String urlVideo) {
         Optional<UUID> clienteIdOpt = sessaoService.verificarSessao(chaveSessao);
         if (clienteIdOpt.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sessão inválida ou expirada.");
         }
-        int updatedRows = projetoRepository.atualizarProjeto(projetoId, nome, descricao);
+        // (Opcional) Verificar se o projeto realmente pertence a este clienteIdOpt.get(), se desejar
+        int updatedRows = projetoRepository.atualizarProjeto(projetoId, nome, descricao, urlVideo);
         if (updatedRows <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Projeto não encontrado para atualizar.");
         }
     }
+
 
     /**
      * Deleta um projeto (e, em cascata, tasks e alterações).
@@ -86,31 +85,27 @@ public class ProjetoService {
 
     @Transactional(readOnly = true)
     public List<ProjetoDTO> buscarProjetosDoUsuario(String chaveSessao) {
-        // 1) Verifica sessão
         Optional<UUID> clienteIdOpt = sessaoService.verificarSessao(chaveSessao);
         if (clienteIdOpt.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sessão inválida ou expirada.");
         }
 
-        // 2) Busca os projetos deste cliente
         UUID clienteId = clienteIdOpt.get();
         List<Projeto> projetos = projetoRepository.findProjetosByCliente(clienteId);
 
-        // 3) Mapeia cada Projeto -> ProjetoDTO
         List<ProjetoDTO> dtoList = new ArrayList<>();
         for (Projeto p : projetos) {
-            // p.getCriadoPor() não deve dar LazyInitException porque estamos em @Transactional(readOnly = true)
-            // e fetch = LAZY funciona dentro do escopo transacional
             String nomeUsuario = (p.getCriadoPor() != null) ? p.getCriadoPor().getNome() : null;
-
             ProjetoDTO dto = new ProjetoDTO(
                     p.getId(),
                     p.getNome(),
                     p.getDescricao(),
-                    nomeUsuario
+                    nomeUsuario,
+                    p.getUrlVideo() // <-- Atribui a nova propriedade ao DTO
             );
             dtoList.add(dto);
         }
         return dtoList;
     }
+
 }

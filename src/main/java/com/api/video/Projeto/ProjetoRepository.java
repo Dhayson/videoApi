@@ -15,41 +15,37 @@ import java.util.UUID;
 @Repository
 public interface ProjetoRepository extends JpaRepository<Projeto, UUID> {
 
-    /**
-     * Cria um novo projeto via query nativa (INSERT).
-     * Retorna o número de linhas afetadas (se > 0, inseriu com sucesso).
-     */
     @Transactional
     @Modifying
     @Query(value = """
-        INSERT INTO projetos (id, nome, descricao, data_criacao, criado_por)
-        VALUES (:id, :nome, :descricao, :dataCriacao, :criadoPor)
-    """, nativeQuery = true)
+    INSERT INTO projetos (id, nome, descricao, data_criacao, criado_por, url_video)
+    VALUES (:id, :nome, :descricao, :dataCriacao, :criadoPor, :urlVideo)
+""", nativeQuery = true)
     int criarProjeto(
             @Param("id") UUID id,
             @Param("nome") String nome,
             @Param("descricao") String descricao,
             @Param("dataCriacao") LocalDate dataCriacao,
-            @Param("criadoPor") UUID criadoPor
+            @Param("criadoPor") UUID criadoPor,
+            @Param("urlVideo") String urlVideo
     );
 
-    /**
-     * Atualiza o nome e a descrição de um projeto via JPQL (UPDATE).
-     * Retorna o número de linhas afetadas (se > 0, atualizou).
-     */
     @Transactional
     @Modifying
     @Query("""
-        UPDATE Projeto p
-        SET p.nome = :nome,
-            p.descricao = :descricao
-        WHERE p.id = :id
-    """)
+    UPDATE Projeto p
+    SET p.nome = :nome,
+        p.descricao = :descricao,
+        p.urlVideo = :urlVideo
+    WHERE p.id = :id
+""")
     int atualizarProjeto(
             @Param("id") UUID id,
             @Param("nome") String nome,
-            @Param("descricao") String descricao
+            @Param("descricao") String descricao,
+            @Param("urlVideo") String urlVideo
     );
+
 
     /**
      * Deleta um projeto via JPQL (DELETE).
