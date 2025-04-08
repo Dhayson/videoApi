@@ -1,5 +1,6 @@
 package com.api.video.Projeto;
 
+import com.api.video.Projeto.DTO.ProjetoGetDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -75,4 +76,9 @@ public interface ProjetoRepository extends JpaRepository<Projeto, UUID> {
     WHERE p.criadoPor.id = :clienteId
 """)
     List<Projeto> findProjetosByCliente(@Param("clienteId") UUID clienteId);
+
+    @Query("SELECT new com.api.video.Projeto.DTO.ProjetoGetDTO(p.descricao, p.urlVideo) " +
+            "FROM Projeto p WHERE p.id = :id AND p.criadoPor.id = :clienteId")
+    Optional<ProjetoGetDTO> buscarDescricaoUrlPorProjeto(@Param("id") UUID id, @Param("clienteId") UUID clienteId);
+
 }

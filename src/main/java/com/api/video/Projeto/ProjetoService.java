@@ -1,6 +1,7 @@
 package com.api.video.Projeto;
 
 import com.api.video.Projeto.DTO.ProjetoDTO;
+import com.api.video.Projeto.DTO.ProjetoGetDTO;
 import com.api.video.Sessao.SessaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -107,5 +108,18 @@ public class ProjetoService {
         }
         return dtoList;
     }
+
+    @Transactional(readOnly = true)
+    public ProjetoGetDTO buscarDescricaoUrlPorProjeto(String chaveSessao, UUID projetoId) {
+        Optional<UUID> clienteIdOpt = sessaoService.verificarSessao(chaveSessao);
+        if (clienteIdOpt.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sessão inválida ou expirada.");
+        }
+        UUID clienteId = clienteIdOpt.get();
+
+        Optional<ProjetoGetDTO> dtoOpt = projetoRepository.buscarDescricaoUrlPorProjeto(projetoId, clienteId);
+        return dtoOpt.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Projeto não encontrado ou acesso negado."));
+    }
+
 
 }

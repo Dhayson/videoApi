@@ -1,6 +1,7 @@
 package com.api.video.Projeto;
 
 import com.api.video.Projeto.DTO.ProjetoDTO;
+import com.api.video.Projeto.DTO.ProjetoGetDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,12 +62,6 @@ public class ProjetoController {
     }
 
 
-    /**
-     * Deleta um projeto e suas associações (tasks, alterações, etc).
-     * Exemplo de requisição:
-     *  DELETE /projetos/{id}
-     *  Header: chaveSessao=...
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletarProjeto(
             @RequestHeader("chaveSessao") String chaveSessao,
@@ -81,5 +76,13 @@ public class ProjetoController {
     ) {
         List<ProjetoDTO> projetos = projetoService.buscarProjetosDoUsuario(chaveSessao);
         return ResponseEntity.ok(projetos);
+    }
+
+    @GetMapping("/getProjeto/{id}")
+    public ResponseEntity<ProjetoGetDTO> getDescricaoUrlProjeto(
+            @RequestHeader("chaveSessao") String chaveSessao,
+            @PathVariable("id") UUID projetoId) {
+        ProjetoGetDTO dto = projetoService.buscarDescricaoUrlPorProjeto(chaveSessao, projetoId);
+        return ResponseEntity.ok(dto);
     }
 }
