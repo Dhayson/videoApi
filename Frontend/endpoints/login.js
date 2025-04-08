@@ -30,7 +30,7 @@ function setSessionId(session_id) {
   localStorage.setItem("sessionID", session_id);
 }
 
-function getSessionId(session_id) {
+function getSessionId() {
   return localStorage.getItem("sessionID");
 }
 
