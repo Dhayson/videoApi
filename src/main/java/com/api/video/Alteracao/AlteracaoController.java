@@ -1,0 +1,115 @@
+package com.api.video.Alteracao;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/v1/alteracoes")
+public class AlteracaoController {
+
+    @Autowired
+    private AlteracaoService alteracaoService;
+
+    // DTO para criação (exemplo)
+    public static class AlteracaoCreateDTO {
+        private UUID projetoId;
+        private UUID taskId;
+        private String descricao;
+
+        public UUID getProjetoId() { return projetoId; }
+        public void setProjetoId(UUID projetoId) { this.projetoId = projetoId; }
+
+        public UUID getTaskId() { return taskId; }
+        public void setTaskId(UUID taskId) { this.taskId = taskId; }
+
+        public String getDescricao() { return descricao; }
+        public void setDescricao(String descricao) { this.descricao = descricao; }
+    }
+
+    // DTO para atualização (exemplo)
+    public static class AlteracaoUpdateDTO {
+        private String descricao;
+        private LocalDate dataAlteracao;
+        private UUID taskId;
+
+        public String getDescricao() { return descricao; }
+        public void setDescricao(String descricao) { this.descricao = descricao; }
+
+        public LocalDate getDataAlteracao() { return dataAlteracao; }
+        public void setDataAlteracao(LocalDate dataAlteracao) { this.dataAlteracao = dataAlteracao; }
+
+        public UUID getTaskId() { return taskId; }
+        public void setTaskId(UUID taskId) { this.taskId = taskId; }
+    }
+
+    /**
+     * Criar Alteração
+     * Exemplo de requisição (POST /alteracoes/criar)
+     *  Body JSON: { "projetoId": "...", "taskId": "...", "descricao": "..." }
+     *  Header: chaveSessao=...
+     */
+    @PostMapping("/criar")
+    public ResponseEntity<String> criarAlteracao(
+            @RequestHeader("chaveSessao") String chaveSessao,
+            @RequestBody AlteracaoCreateDTO dto) {
+        UUID idAlteracao = alteracaoService.criarAlteracao(
+                chaveSessao,
+                dto.getProjetoId(),
+                dto.getTaskId(),
+                dto.getDescricao()
+        );
+        return ResponseEntity.ok("Alteração criada com sucesso! ID: " + idAlteracao);
+    }
+
+    /**
+     * Atualizar Alteração
+     * Exemplo de requisição (PUT /alteracoes/{id})
+     *  Body JSON: { "descricao": "...", "dataAlteracao": "2025-04-15", "taskId": "..." }
+     *  Header: chaveSessao=...
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<String> atualizarAlteracao(
+            @RequestHeader("chaveSessao") String chaveSessao,
+            @PathVariable("id") UUID alteracaoId,
+            @RequestBody AlteracaoUpdateDTO dto) {
+        alteracaoService.atualizarAlteracao(
+                chaveSessao,
+                alteracaoId,
+                dto.getDescricao(),
+                dto.getDataAlteracao(),
+                dto.getTaskId()
+        );
+        return ResponseEntity.ok("Alteração atualizada com sucesso!");
+    }
+
+    /**
+     * Deletar Alteração
+     * Exemplo de requisição (DELETE /alteracoes/{id})
+     *  Header: chaveSessao=...
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletarAlteracao(
+            @RequestHeader("chaveSessao") String chaveSessao,
+            @PathVariable("id") UUID alteracaoId) {
+        alteracaoService.deletarAlteracao(chaveSessao, alteracaoId);
+        return ResponseEntity.ok("Alteração deletada com sucesso!");
+    }
+
+    /**
+     * Buscar Alterações de um Projeto
+     * Exemplo de requisição (GET /alteracoes/projeto/{projetoId})
+     *  Header: chaveSessao=...
+     */
+    @GetMapping("/projeto/{projetoId}")
+    public ResponseEntity<List<Alteracao>> buscarAlteracoesPorProjeto(
+            @RequestHeader("chaveSessao") String chaveSessao,
+            @PathVariable("projetoId") UUID projetoId) {
+        List<Alteracao> alteracoes = alteracaoService.buscarAlteracoesPorProjeto(chaveSessao, projetoId);
+        return ResponseEntity.ok(alteracoes);
+    }
+}
