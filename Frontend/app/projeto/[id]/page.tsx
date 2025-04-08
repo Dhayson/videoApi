@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, } from "react"
 import { Search, Trash2, Plus, Check, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
 import { MainLayout } from "@/components/main-layout"
+import { VideoWithFeedback } from "@/components/video-with-feedback"
 
 // Essa é a principal coisa para mostrar amanhã. Deve funcionar a todo custo.
 
@@ -17,10 +18,21 @@ import { MainLayout } from "@/components/main-layout"
 const mockTasks = [
   { id: 1, name: "Nome da task 1", date: "10/07/2023", status: "active" },
   { id: 2, name: "Nome da task 2", date: "11/07/2023", status: "active" },
-  { id: 3, name: "Nome da task 3", date: "10/07/2023", status: "active" },
-  { id: 4, name: "Nome da task 4", date: "11/07/2023", status: "active" },
-  { id: 5, name: "Nome da task 5", date: "10/07/2023", status: "active" },
-  { id: 6, name: "Nome da task 6", date: "11/07/2023", status: "active" },
+]
+
+const feedbacks = [
+  {
+    id: 1,
+    timestamp: 3,
+    message: "Corrigir essa fala",
+    duration: 5,
+    position: { top: "90%", left: "10%" }
+  },
+  {
+    id: 2,
+    timestamp: 9,
+    message: "Adicionar legenda aqui",
+  }
 ]
 
 // Alterações também precisam de autor, descricao e uma task de referencia
@@ -30,16 +42,6 @@ const mockTasks = [
 const mockAlteracoes = [
   { id: 1, name: "Alteração 1", status: "active" },
   { id: 2, name: "Alteração 2", status: "inactive" },
-  { id: 3, name: "Alteração 1", status: "active" },
-  { id: 4, name: "Alteração 2", status: "inactive" },
-  { id: 5, name: "Alteração 2", status: "inactive" },
-  { id: 6, name: "Alteração 2", status: "inactive" },
-  { id: 7, name: "Alteração 1", status: "active" },
-  { id: 8, name: "Alteração 1", status: "active" },
-  { id: 9, name: "Alteração 1", status: "active" },
-  { id: 10, name: "Alteração 2", status: "inactive" },
-  { id: 11, name: "Alteração 2", status: "inactive" },
-  { id: 12, name: "Alteração 2", status: "inactive" },
 ]
 
 // Colocar aqui também todas as informações do projeto em questão
@@ -127,11 +129,7 @@ export default function ProjetoPage() {
             <CardContent>
               {/* Representação do vídeo (real, sem player fake) */}
               <div className="aspect-video bg-black rounded-md overflow-hidden mb-4">
-                <video
-                  src="/videos/exemplo.mp4" // Definir uma src no projeto
-                  controls
-                  className="w-full h-full object-cover"
-                />
+              <VideoWithFeedback src="https://www.w3schools.com/html/mov_bbb.mp4" feedbacks={feedbacks} />
               </div>
 
               {/* Alterações e formulário */}
