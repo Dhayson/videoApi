@@ -10,28 +10,17 @@ import { Logo } from "@/components/logo"
 import { ProjectCard } from "@/components/project-card"
 import { MainLayout } from "@/components/main-layout"
 
+// Um projeto também pode conter uma url de vídeo, a ser tocado na página
+// Está pendente a formulação dos colaboradores, plataformas, contatos e outras métricas para o projeto
 const mockProjects = [
-  { id: 1, name: "Nome do Projeto", status: "active" },
+  { id: 1, name: "Nome do Projeto", status: "active", data_de_criacao: "2025-04-01" },
   { id: 2, name: "Nome do Projeto", status: "active" },
-  { id: 3, name: "Nome do Projeto", status: "inactive" },
-  { id: 4, name: "Nome do Projeto", status: "inactive" },
-  { id: 5, name: "Nome do Projeto", status: "inactive" },
-  { id: 6, name: "Nome do Projeto", status: "active" },
-  { id: 7, name: "Nome do Projeto", status: "inactive" },
-  { id: 8, name: "Nome do Projeto", status: "active" },
-  { id: 9, name: "Nome do Projeto", status: "inactive" },
-  { id: 10, name: "Nome do Projeto", status: "inactive" },
-  { id: 11, name: "Nome do Projeto", status: "inactive" },
-  { id: 12, name: "Nome do Projeto", status: "inactive" },
-  { id: 13, name: "Nome do Projeto", status: "inactive" },
-  { id: 14, name: "Nome do Projeto", status: "inactive" },
-  { id: 15, name: "Nome do Projeto", status: "inactive" },
-  { id: 16, name: "Nome do Projeto", status: "inactive" },
-  { id: 17, name: "Nome do Projeto", status: "inactive" },
 ]
 
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("")
+  // Aqui é importante carregar os projetos da database, se houver
+  // Com nome, descrição e data de criação
   const [projects, setProjects] = useState(mockProjects)
 
   const filteredProjects = projects.filter((project) =>
@@ -65,6 +54,7 @@ export default function HomePage() {
               <div className="grid grid-cols-4 text-sm font-medium text-gray-500 mb-2">
                 <div className="col-span-2">Nome do projeto</div>
                 <div className="text-center">Status</div>
+                {/* <div className="text-center">Data de criação</div> */}
                 <div className="text-center">Remover</div>
               </div>
 
@@ -80,13 +70,26 @@ export default function HomePage() {
                         {project.name}
                       </Link>
                     </div>
+                    
                     <div className="flex justify-center">
+                      {/*Usar a cor da bolinha aqui não trás muita clareza*/}
                       <div
-                        className={`h-4 w-4 rounded-full ${
+                        className={`text-sm text-blue-600 hover:underline ${
                           project.status === "active" ? "bg-blue-500" : "bg-gray-500"
                         }`}
                       />
+                      <p>{project.status}</p>
                     </div>
+
+                    {/* <div className="col-span-2 flex items-center space-x-2">
+                      <div className="bg-gray-200 rounded-full h-6 w-6 flex items-center justify-center text-xs">P</div>
+                      <p
+                        className="text-sm text-blue-600 hover:underline"
+                      >
+                        {project.data_de_criacao}
+                      </p>
+                    </div> */}
+
                     <div className="flex justify-center">
                       <button
                         onClick={() => handleRemoveProject(project.id)}
@@ -126,6 +129,7 @@ export default function HomePage() {
                 <CardContent className="p-4">
                   <h3 className="font-medium mb-2">Estatísticas</h3>
                   <div className="space-y-1 text-sm">
+                    {/*Isso pode ser uma query na database; porém, é muito cosmético e não essencial*/}
                     <p>Número total de projetos concluídos</p>
                     <p>Número total de empresas parceiras</p>
                     <p>Taxa de engajamento</p>
@@ -147,6 +151,8 @@ export default function HomePage() {
                   title="Projeto 1"
                   notifications={5}
                   engagementRate={75}
+                  // Se alguém resolver isso, vai ser massa.
+                  // Dá para por um url no projeto na database
                   videoSrc="/videos/projeto-1.jpg"
                   className="h-full" // <-- importante se o componente aceitar props de classe
                 />

@@ -16,6 +16,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Logo } from "@/components/logo"
 import { MainLayout } from "@/components/main-layout"
 
+// Essa página é importante.
+// Está pendente a formulação dos colaboradores, plataformas, contatos e outras métricas para o projeto
+
 export default function CriarProjetoPage() {
   const router = useRouter()
   const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null)

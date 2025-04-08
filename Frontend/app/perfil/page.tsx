@@ -9,6 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Logo } from "@/components/logo"
 import { MainLayout } from "@/components/main-layout"
 
+// Essa página não é prioridade
+
 const mockContacts = Array.from({ length: 20 }, (_, i) => ({
   id: i + 1,
   name: `Contato ${i + 1}`,

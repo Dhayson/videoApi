@@ -10,6 +10,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
 import { MainLayout } from "@/components/main-layout"
 
+// Essa é a principal coisa para mostrar amanhã. Deve funcionar a todo custo.
+
+// As tasks também precisam de descrição, prioridade e estarem relacionadas a um responsável
+// A ser definidos os endpoins e uma página detalhada para a task
 const mockTasks = [
   { id: 1, name: "Nome da task 1", date: "10/07/2023", status: "active" },
   { id: 2, name: "Nome da task 2", date: "11/07/2023", status: "active" },
@@ -19,6 +23,10 @@ const mockTasks = [
   { id: 6, name: "Nome da task 6", date: "11/07/2023", status: "active" },
 ]
 
+// Alterações também precisam de autor, descricao e uma task de referencia
+// Possivelmente um timestamp e prioridade
+// A ser definidos os endpoints e uma página detalhada para a alteração
+// A ser definido no backend essas associações
 const mockAlteracoes = [
   { id: 1, name: "Alteração 1", status: "active" },
   { id: 2, name: "Alteração 2", status: "inactive" },
@@ -33,6 +41,8 @@ const mockAlteracoes = [
   { id: 11, name: "Alteração 2", status: "inactive" },
   { id: 12, name: "Alteração 2", status: "inactive" },
 ]
+
+// Colocar aqui também todas as informações do projeto em questão
 
 export default function ProjetoPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -118,7 +128,7 @@ export default function ProjetoPage() {
               {/* Representação do vídeo (real, sem player fake) */}
               <div className="aspect-video bg-black rounded-md overflow-hidden mb-4">
                 <video
-                  src="/videos/exemplo.mp4"
+                  src="/videos/exemplo.mp4" // Definir uma src no projeto
                   controls
                   className="w-full h-full object-cover"
                 />
