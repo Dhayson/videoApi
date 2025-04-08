@@ -20,6 +20,19 @@ const mockProjects = [
   // { id: 2, nome: "Nome do Projeto", status: "active" },
 ]
 
+const mockFeedbacks = [
+  {
+    id: 1,
+    timestamp: 3,
+    message: "Corrigir essa fala",
+  },
+  {
+    id: 2,
+    timestamp: 9,
+    message: "Adicionar legenda aqui",
+  }
+]
+
 
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -169,14 +182,16 @@ export default function HomePage() {
                   engagementRate={75}
                   // Se alguém resolver isso, vai ser massa.
                   // Dá para por um url no projeto na database
-                  videoSrc="/videos/projeto-1.jpg"
+                  videoSrc={projects[0]?.src || "https://www.w3schools.com/html/mov_bbb.mp4"}
+                  feedbacks={mockFeedbacks}
                   className="h-full" // <-- importante se o componente aceitar props de classe
                 />
                 <ProjectCard
                   title="Projeto 2"
                   notifications={3}
                   engagementRate={60}
-                  videoSrc="/videos/projeto-2.jpg"
+                  videoSrc={projects[1]?.src || "https://www.w3schools.com/html/mov_bbb.mp4"}
+                  feedbacks={mockFeedbacks}
                   className="h-full"
                 />
               </div>
