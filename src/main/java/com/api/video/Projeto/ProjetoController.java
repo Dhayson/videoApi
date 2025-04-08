@@ -41,7 +41,7 @@ public class ProjetoController {
      *  Header: chaveSessao=...
      *  Body JSON: { "nome": "...", "descricao": "..." }
      */
-    @PostMapping
+    @PostMapping("/criar")
     public ResponseEntity<String> criarProjeto(
             @RequestHeader("chaveSessao") String chaveSessao,
             @RequestBody ProjetoDTO dto) {
