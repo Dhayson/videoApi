@@ -60,8 +60,6 @@ public class ProjetoService {
 
     public Optional<List<UUID>> obterProjetosUsuario(UUID user_id) {
         try {
-            UUID idProjeto = UUID.randomUUID();
-            // Insere o projeto
             Cliente cliente = new Cliente();
             cliente.setId(user_id);
             return Optional.ofNullable(ProjetoRepository.findUserProjects(cliente));
