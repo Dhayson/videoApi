@@ -2,15 +2,11 @@ package com.api.video.Projeto.DTO;
 
 import java.util.UUID;
 
-public static class ProjetoDTO {
+public class ProjetoDTO {
     private UUID id;            // id do projeto
     private String nome;        // nome do projeto
     private String descricao;   // descrição do projeto
     private String nomeUsuario; // nome do cliente que criou
-
-    // Construtores
-    public ProjetoDTO() {
-    }
 
     public ProjetoDTO(UUID id, String nome, String descricao, String nomeUsuario) {
         this.id = id;
