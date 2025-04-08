@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -78,5 +79,18 @@ public class ProjetoService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Projeto não encontrado para exclusão.");
         }
+    }
+
+    public List<Projeto> buscarProjetosDoUsuario(String chaveSessao) {
+        // Verifica se a sessão é válida e obtém o ID do cliente
+        Optional<UUID> clienteIdOpt = sessaoService.verificarSessao(chaveSessao);
+        if (clienteIdOpt.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Sessão inválida ou expirada.");
+        }
+        UUID clienteId = clienteIdOpt.get();
+
+        // Busca todos os projetos criados por este cliente
+        return projetoRepository.findProjetosByCliente(clienteId);
     }
 }

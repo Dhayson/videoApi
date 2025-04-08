@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -71,4 +72,11 @@ public interface ProjetoRepository extends JpaRepository<Projeto, UUID> {
         WHERE p.id = :id
     """)
     Optional<Projeto> findByIdProjeto(@Param("id") UUID id);
+
+    @Query("""
+    SELECT p
+    FROM Projeto p
+    WHERE p.criadoPor.id = :clienteId
+""")
+    List<Projeto> findProjetosByCliente(@Param("clienteId") UUID clienteId);
 }

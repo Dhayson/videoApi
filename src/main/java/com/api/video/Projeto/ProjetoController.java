@@ -3,6 +3,8 @@ package com.api.video.Projeto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -77,5 +79,12 @@ public class ProjetoController {
             @PathVariable("id") UUID id) {
         projetoService.deletarProjeto(chaveSessao, id);
         return ResponseEntity.ok("Projeto deletado com sucesso!");
+    }
+
+    @GetMapping("/get")
+    public ResponseEntity<List<Projeto>> buscarProjetosDoUsuario(
+            @RequestHeader("chaveSessao") String chaveSessao) {
+        List<Projeto> projetos = projetoService.buscarProjetosDoUsuario(chaveSessao);
+        return ResponseEntity.ok(projetos);
     }
 }
