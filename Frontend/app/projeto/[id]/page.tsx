@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
 import { MainLayout } from "@/components/main-layout"
 import { VideoWithFeedback } from "@/components/video-with-feedback"
+import { criarTask, deletarTask} from "../../../endpoints/tasks"
 
 // Essa é a principal coisa para mostrar amanhã. Deve funcionar a todo custo.
 
@@ -45,35 +46,104 @@ const mockAlteracoes = [
 // Colocar aqui também todas as informações do projeto em questão
 
 export default function ProjetoPage() {
+  const [projectId, setProjectId] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
   const [tasks, setTasks] = useState(mockTasks)
   const [alteracoes, setAlteracoes] = useState(mockAlteracoes)
   const [selectedAlteracao, setSelectedAlteracao] = useState<string | null>(null)
 
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(dataEntrega)
+    const Resposta = criarTask(
+      titulo,
+      descricao,
+      prioridade,
+      dataEntrega.toString(),
+      projectId
+    )
+    console.log(Resposta)
+    setMostrarForm(false)
+  };
+
+  const [titulo, setTitulo] = useState('');
+  const [descricao, setDescricao] = useState('');
+  const [status, setStatus] = useState('pendente');
+  const [prioridade, setPrioridade] = useState('MEDIUM');
+  const [dataEntrega, setDataEntrega] = useState('');
+
   const filteredTasks = tasks.filter((task) => task.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
   useEffect(() => {
     // Essa função roda uma vez, quando o componente monta (inicializa)
-    console.log('Componente carregado!');
-  }, []); // <- Array vazio significa: "só na primeira vez"
+    const path = window.location.pathname;
+    const partes = path.split('/');
+    const id = partes[2];
+    setProjectId(id);
+    console.log(id)
+  }, []); // <- Array com id
 
   const handleRemoveTask = (id: number) => {
     setTasks(tasks.filter((task) => task.id !== id))
   }
 
+  const [mostrarForm, setMostrarForm] = useState(false);
+
   const handleCreateTask = () => {
-    const newTask = {
-      id: tasks.length + 1,
-      name: "Nova task",
-      date: new Date().toLocaleDateString(),
-      status: "active",
-    }
-    setTasks([...tasks, newTask])
+    setMostrarForm(true);
   }
 
   return (
     <MainLayout>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+        {mostrarForm && (
+          <div className="modal" >
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <h2>Nova Task</h2>
+
+              <input
+                type="text"
+                placeholder="Título"
+                value={titulo}
+                onChange={(e) => setTitulo(e.target.value)}
+              />
+
+              <textarea
+                placeholder="Descrição"
+                value={descricao}
+                onChange={(e) => setDescricao(e.target.value)}
+              />
+
+              <div>
+              <h1>Status:</h1>
+              <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                <option value="pendente">Pendente</option>
+                <option value="em_andamento">Em andamento</option>
+                <option value="concluida">Concluída</option>
+                </select>
+              </div>
+
+              <div>
+              <h1>Prioridade:</h1>
+              <select value={prioridade} onChange={(e) => setPrioridade(e.target.value)}>
+                <option value="baixa">MEDIUM</option>
+                <option value="media">LOW</option>
+                <option value="alta">HIGH</option>
+                </select>
+              </div>
+
+              <input
+                type="date"
+                value={dataEntrega}
+                onChange={(e) => setDataEntrega(e.target.value)}
+              />
+
+              <button type="submit">Criar</button>
+              <button onClick={() => setMostrarForm(false)}>Cancelar</button>
+            </form>
+          </div>
+        )}
         {/* Coluna das tarefas */}
         <Card>
           <CardHeader>
@@ -113,7 +183,7 @@ export default function ProjetoPage() {
           </div>
 
           <Button onClick={handleCreateTask} className="w-full mt-4 bg-blue-500 hover:bg-blue-600">
-            Create new task
+            Criar nova task
             <Plus className="h-4 w-4 ml-1" />
           </Button>
         </CardContent>
