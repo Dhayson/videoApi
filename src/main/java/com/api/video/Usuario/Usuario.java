@@ -1,11 +1,9 @@
 package com.api.video.Usuario;
 
-import java.util.List;
-import java.util.UUID;
-
-
 import com.api.video.Cliente.Cliente;
 import com.api.video.Sessao.Sessao;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,6 +11,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
+import java.util.List;
+import java.util.UUID;
 
 @ToString(onlyExplicitlyIncluded = true)
 @Getter
@@ -21,6 +21,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table(name = "usuario", schema = "public")
 @Schema(description = "Representa um usuário no sistema.")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Usuario {
 
     @Id
@@ -48,6 +49,4 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Schema(description = "Associação com a tabela SESSAO. Um usuário pode ter várias sessões.")
     private List<Sessao> sessoes;
-
 }
-

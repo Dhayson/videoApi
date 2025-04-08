@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonIgnore;  // importe necessário
 
 @Entity
 @Table(name = "tasks")
@@ -32,6 +33,7 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name = "projeto_id", nullable = false)
+    @JsonIgnore
     private Projeto projeto;
 
     @Column(name = "data_criacao", nullable = false)

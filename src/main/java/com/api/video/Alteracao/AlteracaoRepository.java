@@ -1,65 +1,71 @@
 package com.api.video.Alteracao;
 
-import com.api.video.Sessao.Sessao;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
-@RepositoryRestResource(exported = false)
-public interface AlteracaoRepository extends JpaRepository<Sessao, UUID> {
+@Repository
+public interface AlteracaoRepository extends JpaRepository<Alteracao, UUID> {
 
     @Transactional
     @Modifying
     @Query(value = """
-        INSERT INTO sessao (id, id_usuario, chave_sessao, horario_login, expired)
-        VALUES (:id, :idUsuario, :chaveSessao, :currentTime, false)
-    """, nativeQuery = true)
-    void registrarAlteracao(@Param("id") UUID id, @Param("projetoID") UUID projetoID, @Param("chaveSessao") String chaveSessao,
-                         @Param("currentTime") LocalDateTime currentTime);
-
-    @Query("""
-        SELECT s.expired
-        FROM Sessao s
-        WHERE s.chaveSessao = :chaveSessao
-    """)
-    Optional<Boolean> verificarSeSessaoExpirou(@Param("chaveSessao") String chaveSessao);
-
-    @Query("""
-        SELECT s.horarioLogin
-        FROM Sessao s
-        WHERE s.chaveSessao = :chaveSessao
-    """)
-    Optional<LocalDateTime> buscarHorarioLoginPorChaveSessao(@Param("chaveSessao") String chaveSessao);
-
-    @Query("""
-        SELECT s.usuario.id
-        FROM Sessao s
-        WHERE s.chaveSessao = :chaveSessao
-    """)
-    Optional<UUID> buscarIdUsuarioPorChaveSessao(@Param("chaveSessao") String chaveSessao);
+                INSERT INTO alteracoes (id, projeto_id, autor_id, descricao, data_alteracao, referencia_task, timestamp)
+                VALUES (:id, :projetoId, :autorId, :descricao, :dataAlteracao, :referenciaTaskId, :timestamp)
+            """, nativeQuery = true)
+    int criarAlteracao(
+            @Param("id") UUID id,
+            @Param("projetoId") UUID projetoId,
+            @Param("autorId") UUID autorId,
+            @Param("descricao") String descricao,
+            @Param("dataAlteracao") LocalDate dataAlteracao,
+            @Param("referenciaTaskId") UUID referenciaTaskId,
+            @Param("timestamp") int timestamp);
 
     @Transactional
     @Modifying
     @Query("""
-        UPDATE Sessao s
-        SET s.expired = true
-        WHERE s.chaveSessao = :chaveSessao
-    """)
-    void marcarSessaoComoExpirada(@Param("chaveSessao") String chaveSessao);
+                UPDATE Alteracao a
+                SET a.descricao = :descricao,
+                    a.dataAlteracao = :dataAlteracao,
+                    a.referenciaTask.id = :taskId,
+                    a.timestamp = :timestamp
+                WHERE a.id = :alteracaoId
+                  AND a.projeto.criadoPor.id = :userId
+            """)
+    int atualizarAlteracao(
+            @Param("alteracaoId") UUID alteracaoId,
+            @Param("descricao") String descricao,
+            @Param("dataAlteracao") LocalDate dataAlteracao,
+            @Param("taskId") UUID taskId,
+            @Param("timestamp") int timestamp,
+            @Param("userId") UUID userId);
+
+    @Transactional
+    @Modifying
+    @Query("""
+                DELETE FROM Alteracao a
+                WHERE a.id = :alteracaoId
+                  AND a.projeto.criadoPor.id = :userId
+            """)
+    int deletarAlteracao(
+            @Param("alteracaoId") UUID alteracaoId,
+            @Param("userId") UUID userId);
 
     @Query("""
-    SELECT s
-    FROM Sessao s
-    WHERE s.usuario.id = :idUsuario AND s.expired = false
-""")
-    Optional<Sessao> buscarSessaoValidaPorUsuario(@Param("idUsuario") UUID idUsuario);
-
-
+                SELECT a
+                FROM Alteracao a
+                WHERE a.projeto.id = :projetoId
+                  AND a.projeto.criadoPor.id = :userId
+            """)
+    List<Alteracao> buscarAlteracoesPorProjeto(
+            @Param("projetoId") UUID projetoId,
+            @Param("userId") UUID userId);
 }

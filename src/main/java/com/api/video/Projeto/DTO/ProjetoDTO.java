@@ -3,19 +3,22 @@ package com.api.video.Projeto.DTO;
 import java.util.UUID;
 
 public class ProjetoDTO {
-    private UUID id;            // id do projeto
-    private String nome;        // nome do projeto
-    private String descricao;   // descrição do projeto
-    private String nomeUsuario; // nome do cliente que criou
+    private UUID id;
+    private String nome;
+    private String descricao;
+    private String nomeUsuario; // quem criou
+    private String urlVideo;    // novo campo
 
-    public ProjetoDTO(UUID id, String nome, String descricao, String nomeUsuario) {
+    // Construtor
+    public ProjetoDTO(UUID id, String nome, String descricao, String nomeUsuario, String urlVideo) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
         this.nomeUsuario = nomeUsuario;
+        this.urlVideo = urlVideo;
     }
 
-    // Getters e Setters
+    // Getters e setters...
     public UUID getId() {
         return id;
     }
@@ -43,4 +46,13 @@ public class ProjetoDTO {
     public void setNomeUsuario(String nomeUsuario) {
         this.nomeUsuario = nomeUsuario;
     }
+
+    public String getUrlVideo() {
+        return urlVideo;
+    }
+    public void setUrlVideo(String urlVideo) {
+        this.urlVideo = urlVideo;
+    }
 }
+
+

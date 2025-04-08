@@ -38,4 +38,8 @@ public class Alteracao {
     @ManyToOne
     @JoinColumn(name = "referencia_task", nullable = false)
     private Task referenciaTask;
+
+    // Novo campo mapeado como 'int' (coluna "timestamp" no banco)
+    @Column(name = "timestamp", nullable = false)
+    private int timestamp;
 }

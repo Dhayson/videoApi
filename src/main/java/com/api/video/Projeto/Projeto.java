@@ -35,7 +35,9 @@ public class Projeto {
     @JoinColumn(name = "criado_por", nullable = false)
     private Cliente criadoPor;
 
-    // Relacionamentos bidirecionais (opcionais)
+    @Column(name = "url_video")
+    private String urlVideo;  // ou "url" se preferir
+
     @OneToMany(mappedBy = "projeto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Task> tasks;
 
