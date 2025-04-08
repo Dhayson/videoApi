@@ -1,14 +1,12 @@
 package com.api.video.Projeto;
 
-import com.api.video.Cliente.Cliente;
-import com.api.video.Projeto.Projeto;
-import com.api.video.Projeto.ProjetoRepository;
-import jakarta.transaction.Transactional;
+import com.api.video.Sessao.SessaoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,56 +14,83 @@ import java.util.UUID;
 @Service
 public class ProjetoService {
 
-    private final ProjetoRepository ProjetoRepository;
+    @Autowired
+    private ProjetoRepository projetoRepository;
 
-    public ProjetoService(ProjetoRepository ProjetoRepository) {
-        this.ProjetoRepository = ProjetoRepository;
-    }
+    @Autowired
+    private SessaoService sessaoService;
 
-    public Optional<List<String>> obterInfo(UUID idProjeto) {
-        Optional<Projeto> ProjetoOptional = ProjetoRepository.findProjetoById(idProjeto);
-
-        if (ProjetoOptional.isPresent()) {
-            Projeto Projeto = ProjetoOptional.get();
-            List<String> informacoes = new ArrayList<>();
-
-            if (Projeto.getId() != null) {
-                informacoes.add(Projeto.getNome());
-                informacoes.add(Projeto.getDescricao());
-                informacoes.add(Projeto.getDataCriacao().format(DateTimeFormatter.ISO_DATE));
-                informacoes.add(Projeto.getCriadoPor().getNome());
-                informacoes.add(Projeto.getCriadoPor().getId().toString());
-                return Optional.of(informacoes);
-            }
+    /**
+     * Cria um novo projeto.
+     * Utiliza o UUID do cliente retornado por verificarSessao(chaveSessao).
+     */
+    public UUID criarProjeto(String chaveSessao, String nome, String descricao) {
+        Optional<UUID> clienteIdOpt = sessaoService.verificarSessao(chaveSessao);
+        if (clienteIdOpt.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sessão inválida ou expirada.");
         }
-        return Optional.empty();
-    }
+        UUID clienteId = clienteIdOpt.get();
 
-    @Transactional
-    public boolean adicionarProjeto(String nome, String descricao, UUID id_client) {
-        try {
-            UUID idProjeto = UUID.randomUUID();
-            // Insere o projeto
-            ProjetoRepository.inserirProjeto(idProjeto, nome, descricao, id_client);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+        UUID projetoId = UUID.randomUUID();
+        int rows = projetoRepository.criarProjeto(
+                projetoId,
+                nome,
+                descricao,
+                LocalDate.now(), // data de criação
+                clienteId       // ID do cliente
+        );
+
+        if (rows > 0) {
+            return projetoId;
+        } else {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Falha ao inserir projeto.");
         }
     }
 
-    public boolean deletarProjeto(UUID id) {
-        return ProjetoRepository.deletarProjeto(id) > 0;
+    /**
+     * Edita um projeto (nome e descrição).
+     * Opcionalmente, você pode verificar se o clienteId da sessão
+     * realmente é dono do projeto antes de atualizar.
+     */
+    public void editarProjeto(String chaveSessao, UUID projetoId, String nome, String descricao) {
+        Optional<UUID> clienteIdOpt = sessaoService.verificarSessao(chaveSessao);
+        if (clienteIdOpt.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sessão inválida ou expirada.");
+        }
+        int updatedRows = projetoRepository.atualizarProjeto(projetoId, nome, descricao);
+        if (updatedRows <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Projeto não encontrado para atualizar.");
+        }
     }
 
-    public Optional<List<UUID>> obterProjetosUsuario(UUID user_id) {
-        try {
-            Cliente cliente = new Cliente();
-            cliente.setId(user_id);
-            return Optional.ofNullable(ProjetoRepository.findUserProjects(cliente));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Optional.empty();
+    /**
+     * Deleta um projeto (e, em cascata, tasks e alterações).
+     * Opcionalmente, verificar se o usuário é dono.
+     */
+    public void deletarProjeto(String chaveSessao, UUID projetoId) {
+        Optional<UUID> clienteIdOpt = sessaoService.verificarSessao(chaveSessao);
+        if (clienteIdOpt.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sessão inválida ou expirada.");
         }
+        int deletedRows = projetoRepository.deletarProjeto(projetoId);
+        if (deletedRows <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Projeto não encontrado para exclusão.");
+        }
+    }
+
+    public List<Projeto> buscarProjetosDoUsuario(String chaveSessao) {
+        // Verifica se a sessão é válida e obtém o ID do cliente
+        Optional<UUID> clienteIdOpt = sessaoService.verificarSessao(chaveSessao);
+        if (clienteIdOpt.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Sessão inválida ou expirada.");
+        }
+        UUID clienteId = clienteIdOpt.get();
+
+        // Busca todos os projetos criados por este cliente
+        return projetoRepository.findProjetosByCliente(clienteId);
     }
 }

@@ -1,88 +1,90 @@
 package com.api.video.Projeto;
 
-import com.api.video.Sessao.SessaoService;
-import com.api.video.Projeto.DTO.ProjetoDTO;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/Projeto")
+@RequestMapping("/api/v1/projetos")
 public class ProjetoController {
 
-    private final ProjetoService ProjetoService;
-    private final SessaoService sessaoService;
+    @Autowired
+    private ProjetoService projetoService;
 
-    public ProjetoController(ProjetoService ProjetoService, SessaoService sessaoService) {
-        this.ProjetoService = ProjetoService;
-        this.sessaoService = sessaoService;
-    }
+    /**
+     * DTO simples para receber dados de criação/edição do projeto
+     */
+    public static class ProjetoDTO {
+        private String nome;
+        private String descricao;
 
-    @PostMapping("/criarProjeto")
-    public ResponseEntity<String> criarProjeto(@RequestBody ProjetoDTO projetoDTO) {
-        try {
-            boolean sucesso = ProjetoService.adicionarProjeto(
-                    projetoDTO.nome,
-                    projetoDTO.descricao,
-                    projetoDTO.criadoPor
-            );
-
-            return sucesso
-                    ? ResponseEntity.status(HttpStatus.CREATED)
-                    .body("Projeto criado com sucesso.")
-                    : ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Erro ao criar projeto.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao criar projeto: " + e.getMessage());
+        // Getters e Setters
+        public String getNome() {
+            return nome;
+        }
+        public void setNome(String nome) {
+            this.nome = nome;
+        }
+        public String getDescricao() {
+            return descricao;
+        }
+        public void setDescricao(String descricao) {
+            this.descricao = descricao;
         }
     }
 
-    @GetMapping("/getinfo")
-    public ResponseEntity<?> getInfo(@RequestParam UUID projeto_id) {
-        try {
-            Optional<List<String>> informacoesProjeto = ProjetoService.obterInfo(projeto_id);
-            return informacoesProjeto.isPresent()
-                    ? ResponseEntity.ok(informacoesProjeto.get())
-                    : ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Projeto não encontrado.");
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao obter informações: " + e.getMessage());
-        }
+    /**
+     * Cria um projeto novo.
+     * Exemplo de requisição:
+     *  POST /projetos
+     *  Header: chaveSessao=...
+     *  Body JSON: { "nome": "...", "descricao": "..." }
+     */
+    @PostMapping("/criar")
+    public ResponseEntity<String> criarProjeto(
+            @RequestHeader("chaveSessao") String chaveSessao,
+            @RequestBody ProjetoDTO dto) {
+        UUID projetoId = projetoService.criarProjeto(chaveSessao, dto.getNome(), dto.getDescricao());
+        return ResponseEntity.ok("Projeto criado com sucesso! ID: " + projetoId);
     }
 
-    @GetMapping("/getProjetosUsuario")
-    public ResponseEntity<?> getUserProjetos(@RequestParam UUID user_id) {
-        try {
-            Optional<List<UUID>> projetos = ProjetoService.obterProjetosUsuario(user_id);
-            return projetos.isPresent()
-                    ? ResponseEntity.ok(projetos.get())
-                    : ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Projeto não encontrado.");
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao obter informações: " + e.getMessage());
-        }
+    /**
+     * Edita o nome e descrição de um projeto.
+     * Exemplo de requisição:
+     *  PUT /projetos/{id}
+     *  Header: chaveSessao=...
+     *  Body JSON: { "nome": "...", "descricao": "..." }
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<String> editarProjeto(
+            @RequestHeader("chaveSessao") String chaveSessao,
+            @PathVariable("id") UUID id,
+            @RequestBody ProjetoDTO dto) {
+        projetoService.editarProjeto(chaveSessao, id, dto.getNome(), dto.getDescricao());
+        return ResponseEntity.ok("Projeto atualizado com sucesso!");
     }
 
-    @DeleteMapping("/deletarProjeto")
-    public ResponseEntity<String> deletarProjeto(@RequestParam UUID projeto_id) {
-        try {
-            boolean sucesso = ProjetoService.deletarProjeto(projeto_id);
-            return sucesso
-                    ? ResponseEntity.ok("Projeto deletado com sucesso.")
-                    : ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Erro ao deletar projeto.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao deletar projeto: " + e.getMessage());
-        }
+    /**
+     * Deleta um projeto e suas associações (tasks, alterações, etc).
+     * Exemplo de requisição:
+     *  DELETE /projetos/{id}
+     *  Header: chaveSessao=...
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletarProjeto(
+            @RequestHeader("chaveSessao") String chaveSessao,
+            @PathVariable("id") UUID id) {
+        projetoService.deletarProjeto(chaveSessao, id);
+        return ResponseEntity.ok("Projeto deletado com sucesso!");
+    }
+
+    @GetMapping("/get")
+    public ResponseEntity<List<Projeto>> buscarProjetosDoUsuario(
+            @RequestHeader("chaveSessao") String chaveSessao) {
+        List<Projeto> projetos = projetoService.buscarProjetosDoUsuario(chaveSessao);
+        return ResponseEntity.ok(projetos);
     }
 }
