@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState, forwardRef, useImperativeHandle, useRef} from "react"
 
 type Feedback = {
   id: number
@@ -8,13 +8,22 @@ type Feedback = {
   message: string
 }
 
-export function VideoWithFeedback({ src, feedbacks }: { src: string; feedbacks: Feedback[] }) {
-  const videoRef = useRef<HTMLVideoElement>(null)
+type Props = {
+  src: string
+  feedbacks: Feedback[]
+}
+
+export const VideoWithFeedback = forwardRef<HTMLVideoElement, Props>(({ src, feedbacks }, ref) => {
   const [activeFeedbacks, setActiveFeedbacks] = useState<Feedback[]>([])
   const duration = 5 // Duration in seconds to show feedback
 
+  const internalRef = useRef<HTMLVideoElement>(null)
+
+  // Permite que o ref externo controle o video
+  useImperativeHandle(ref, () => internalRef.current as HTMLVideoElement)
+
   useEffect(() => {
-    const video = videoRef.current
+    const video = internalRef.current
     if (!video) return
 
     const handleTimeUpdate = () => {
@@ -34,7 +43,7 @@ export function VideoWithFeedback({ src, feedbacks }: { src: string; feedbacks: 
 
   return (
     <div className="relative w-full aspect-video bg-black rounded-md overflow-hidden">
-      <video ref={videoRef} src={src} controls className="w-full h-full object-cover" />
+      <video ref={internalRef} src={src} controls className="w-full h-full object-cover" />
 
       {activeFeedbacks.map((f) => (
         <div
@@ -51,4 +60,6 @@ export function VideoWithFeedback({ src, feedbacks }: { src: string; feedbacks: 
       ))}
     </div>
   )
-}
+})
+
+VideoWithFeedback.displayName = "VideoWithFeedback"
