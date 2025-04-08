@@ -1,6 +1,6 @@
 "use client"
 
-import { useState,useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { Search, Trash2, Plus, Check, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -51,6 +51,11 @@ export default function ProjetoPage() {
   const [selectedAlteracao, setSelectedAlteracao] = useState<string | null>(null)
 
   const filteredTasks = tasks.filter((task) => task.name.toLowerCase().includes(searchTerm.toLowerCase()))
+
+  useEffect(() => {
+    // Essa função roda uma vez, quando o componente monta (inicializa)
+    console.log('Componente carregado!');
+  }, []); // <- Array vazio significa: "só na primeira vez"
 
   const handleRemoveTask = (id: number) => {
     setTasks(tasks.filter((task) => task.id !== id))

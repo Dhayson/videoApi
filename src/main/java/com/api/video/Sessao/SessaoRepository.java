@@ -1,6 +1,7 @@
 package com.api.video.Sessao;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -59,7 +60,7 @@ public interface SessaoRepository extends JpaRepository<Sessao, UUID> {
     FROM Sessao s
     WHERE s.usuario.id = :idUsuario AND s.expired = false
 """)
-    Optional<Sessao> buscarSessaoValidaPorUsuario(@Param("idUsuario") UUID idUsuario);
+    List<Sessao> buscarSessaoValidaPorUsuario(@Param("idUsuario") UUID idUsuario);
 
 
 }

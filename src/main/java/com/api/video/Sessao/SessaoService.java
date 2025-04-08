@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,9 +43,11 @@ public class SessaoService {
 
     @Transactional
     public String iniciarSessao(UUID idUsuario, String mail) {
-        Optional<Sessao> sessaoExistente = sessaoRepository.buscarSessaoValidaPorUsuario(idUsuario);
-        if (sessaoExistente.isPresent()) {
-            expirarSessao(sessaoExistente.get().getChaveSessao());
+        List<Sessao> sessaoExistente = sessaoRepository.buscarSessaoValidaPorUsuario(idUsuario);
+        if (sessaoExistente.size() > 0) {
+            for (Sessao sessao : sessaoExistente) {
+                expirarSessao(sessao.getChaveSessao());
+            }
         }
 
         String chaveSessao = UUID.randomUUID().toString();
