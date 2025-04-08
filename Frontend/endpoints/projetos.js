@@ -330,6 +330,39 @@ async function testarEditarProjeto() {
   }
 }
 
+async function projectInfo(idProj) {
+  const url = `http://198.74.53.107:8080/api/v1/projetos/getProjeto/${encodeURIComponent(
+    idProj
+  )}`;
+  const chaveSessao = getSessionId();
+  const headers = {
+    chaveSessao: chaveSessao,
+    "Content-Type": "application/json",
+  };
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error("Erro ao recuperar dados:", errorData);
+      return { sucesso: false, erro: errorData };
+    }
+
+    const responseData = await response.json();
+    console.log("Dados do usuário:", responseData);
+    return { sucesso: true, data: responseData };
+  } catch (error) {
+    console.error("Erro ao realizar a requisição de dados:", error);
+    return {
+      sucesso: false,
+      erro: { message: "Erro ao realizar a requisição de dados." },
+    };
+  }
+}
+
 // Chamar a função de teste para executar a criação de projeto
 // await testarCriarProjeto();
 
@@ -346,4 +379,10 @@ async function testarEditarProjeto() {
 // import LocalStorage from "node-localstorage";
 // const localStorage = new LocalStorage.LocalStorage("./scratch");
 
-export { criarProjeto, editarProjeto, listarProjetosDoUsuario, deletarProjeto };
+export {
+  criarProjeto,
+  editarProjeto,
+  listarProjetosDoUsuario,
+  deletarProjeto,
+  projectInfo,
+};
