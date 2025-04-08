@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, } from "react"
+import { useState,useRef } from "react"
 import { Search, Trash2, Plus, Check, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -25,8 +25,6 @@ const feedbacks = [
     id: 1,
     timestamp: 3,
     message: "Corrigir essa fala",
-    duration: 5,
-    position: { top: "90%", left: "10%" }
   },
   {
     id: 2,
