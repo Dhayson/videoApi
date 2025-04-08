@@ -60,10 +60,12 @@ public class AlteracaoController {
                 chaveSessao,
                 dto.getProjetoId(),
                 dto.getTaskId(),
-                dto.getDescricao()
+                dto.getDescricao(),
+                dto.getTimestamp()   // Passa o valor recebido (por exemplo, 220)
         );
         return ResponseEntity.ok("Alteração criada com sucesso! ID: " + idAlteracao);
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<String> atualizarAlteracao(
