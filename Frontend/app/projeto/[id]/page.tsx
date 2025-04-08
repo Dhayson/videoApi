@@ -186,17 +186,11 @@ export default function ProjetoPage() {
                 </div>
               ))}
             </div>
+        </CardContent>
           <Button onClick={handleCreateTask} className="w-full mt-4 bg-blue-500 hover:bg-blue-600">
             Criar nova task
             <Plus className="h-4 w-4 ml-1" />
           </Button>
-        </CardContent>
-
-            <Button onClick={handleCreateTask} className="w-full mt-4 bg-blue-500 hover:bg-blue-600">
-              Create new task
-              <Plus className="h-4 w-4 ml-1" />
-            </Button>
-          </CardContent>
         </Card>
 
         <div className="space-y-6">
