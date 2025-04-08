@@ -33,7 +33,7 @@ public class AlteracaoService {
     /**
      * Cria uma nova alteração.
      */
-    public UUID criarAlteracao(String chaveSessao, UUID projetoId, UUID taskId, String descricao) {
+    public UUID criarAlteracao(String chaveSessao, UUID projetoId, UUID taskId, String descricao, int timestamp) {
         // 1) Verifica sessão
         Optional<UUID> userIdOpt = sessaoService.verificarSessao(chaveSessao);
         if (userIdOpt.isEmpty()) {
@@ -54,10 +54,7 @@ public class AlteracaoService {
                     "Task não encontrada ou não pertence ao projeto informado.");
         }
 
-        // 4) Define o timestamp atual (epoch time em segundos, por exemplo)
-        int currentTimestamp = (int) (System.currentTimeMillis() / 1000L);
-
-        // 5) Cria a alteração
+        // 4) Cria a alteração utilizando o timestamp enviado pelo cliente
         UUID alteracaoId = UUID.randomUUID();
         int rows = alteracaoRepository.criarAlteracao(
                 alteracaoId,
@@ -66,7 +63,7 @@ public class AlteracaoService {
                 descricao,
                 LocalDate.now(),    // data_alteracao
                 taskId,             // referenciaTask
-                currentTimestamp    // novo campo
+                timestamp           // utiliza o valor informado (ex.: 220)
         );
 
         if (rows > 0) {
@@ -75,6 +72,7 @@ public class AlteracaoService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Falha ao criar Alteração.");
         }
     }
+
 
     /**
      * Atualiza uma alteração (ex.: descrição, data, task e timestamp).

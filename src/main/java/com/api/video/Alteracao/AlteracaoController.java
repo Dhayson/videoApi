@@ -15,11 +15,12 @@ public class AlteracaoController {
     @Autowired
     private AlteracaoService alteracaoService;
 
-    // DTO para criação
+    // DTO para criação com timestamp fornecido pelo cliente
     public static class AlteracaoCreateDTO {
         private UUID projetoId;
         private UUID taskId;
         private String descricao;
+        private int timestamp;  // novo campo para receber o valor do cliente
 
         public UUID getProjetoId() { return projetoId; }
         public void setProjetoId(UUID projetoId) { this.projetoId = projetoId; }
@@ -29,7 +30,11 @@ public class AlteracaoController {
 
         public String getDescricao() { return descricao; }
         public void setDescricao(String descricao) { this.descricao = descricao; }
+
+        public int getTimestamp() { return timestamp; }
+        public void setTimestamp(int timestamp) { this.timestamp = timestamp; }
     }
+
 
     // DTO para atualização
     public static class AlteracaoUpdateDTO {
