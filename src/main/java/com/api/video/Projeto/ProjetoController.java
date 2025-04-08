@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/projetos")
+@RequestMapping("/api/v1/projetos")
 public class ProjetoController {
 
     @Autowired
