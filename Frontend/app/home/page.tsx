@@ -9,27 +9,56 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
 import { ProjectCard } from "@/components/project-card"
 import { MainLayout } from "@/components/main-layout"
+import React, { useEffect } from "react"
+import { listarProjetosDoUsuario, deletarProjeto } from "../../endpoints/projetos"
+import {clientInfo} from "../../endpoints/login"
 
 // Um projeto também pode conter uma url de vídeo, a ser tocado na página
 // Está pendente a formulação dos colaboradores, plataformas, contatos e outras métricas para o projeto
 const mockProjects = [
-  { id: 1, name: "Nome do Projeto", status: "active", data_de_criacao: "2025-04-01" },
-  { id: 2, name: "Nome do Projeto", status: "active" },
+  // { id: 1, nome: "Nome do Projeto", status: "active", data_de_criacao: "2025-04-01" },
+  // { id: 2, nome: "Nome do Projeto", status: "active" },
 ]
+
+const mockFeedbacks = [
+  {
+    id: 1,
+    timestamp: 3,
+    message: "Corrigir essa fala",
+  },
+  {
+    id: 2,
+    timestamp: 9,
+    message: "Adicionar legenda aqui",
+  }
+]
+
 
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("")
   // Aqui é importante carregar os projetos da database, se houver
   // Com nome, descrição e data de criação
   const [projects, setProjects] = useState(mockProjects)
+  const [nome_user, setNomeUser] = useState("")
 
   const filteredProjects = projects.filter((project) =>
-    project.name.toLowerCase().includes(searchTerm.toLowerCase())
+    project.nome.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const handleRemoveProject = (id: number) => {
     setProjects(projects.filter((project) => project.id !== id))
+    deletarProjeto(id)
   }
+
+  useEffect(() => {
+    // Essa função roda uma vez, quando o componente monta (inicializa)
+    listarProjetosDoUsuario().then(
+        res => setProjects(res.data)
+    )
+    clientInfo().then(
+      res => setNomeUser(res.data[0])
+    )
+    }, []); // <- Array vazio significa: "só na primeira vez"
 
   return (
     <MainLayout>
@@ -67,7 +96,7 @@ export default function HomePage() {
                         href={`/projeto/${project.id}`}
                         className="text-sm text-blue-600 hover:underline"
                       >
-                        {project.name}
+                        {project.nome}
                       </Link>
                     </div>
                     
@@ -121,7 +150,7 @@ export default function HomePage() {
             <CardHeader className="flex flex-row items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Logo className="h-8 w-8" />
-                <CardTitle className="text-xl text-blue-600">Hello $nome</CardTitle>
+                <CardTitle className="text-xl text-blue-600">Olá {nome_user}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
@@ -153,14 +182,16 @@ export default function HomePage() {
                   engagementRate={75}
                   // Se alguém resolver isso, vai ser massa.
                   // Dá para por um url no projeto na database
-                  videoSrc="/videos/projeto-1.jpg"
+                  videoSrc={projects[0]?.src || "https://www.w3schools.com/html/mov_bbb.mp4"}
+                  feedbacks={mockFeedbacks}
                   className="h-full" // <-- importante se o componente aceitar props de classe
                 />
                 <ProjectCard
                   title="Projeto 2"
                   notifications={3}
                   engagementRate={60}
-                  videoSrc="/videos/projeto-2.jpg"
+                  videoSrc={projects[1]?.src || "https://www.w3schools.com/html/mov_bbb.mp4"}
+                  feedbacks={mockFeedbacks}
                   className="h-full"
                 />
               </div>

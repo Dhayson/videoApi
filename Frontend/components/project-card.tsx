@@ -5,12 +5,14 @@ import { MoreHorizontal, Bell } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import clsx from "clsx"
+import { VideoWithFeedback } from "./video-with-feedback"
 
 interface ProjectCardProps {
   title: string
   notifications: number
   engagementRate: number
   videoSrc: string
+  feedbacks: any
   className?: string
 }
 
@@ -19,6 +21,7 @@ export function ProjectCard({
   notifications,
   engagementRate,
   videoSrc,
+  feedbacks,
   className,
 }: ProjectCardProps) {
   const [isClient, setIsClient] = useState(false)
@@ -44,14 +47,7 @@ export function ProjectCard({
       <CardContent className="flex-1 flex flex-col justify-between">
         <div className="flex-1 rounded-md overflow-hidden bg-black mb-2">
           {isClient && (
-            <video
-              src={videoSrc}
-              controls
-              preload="metadata"
-              className="w-full h-full object-cover"
-            >
-              Seu navegador não suporta vídeos.
-            </video>
+            <VideoWithFeedback src={videoSrc} feedbacks={feedbacks}/>
           )}
         </div>
 
