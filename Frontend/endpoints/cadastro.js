@@ -83,6 +83,11 @@ async function testarCadastroCliente() {
   }
 }
 
-// Chamar a função de teste para executar o cadastro
 export { cadastrarCliente };
-testarCadastroCliente();
+
+// Descomente isso para testar com o node
+// import LocalStorage from "node-localstorage";
+// const localStorage = new LocalStorage.LocalStorage("./scratch");
+
+// Chamar a função de teste para executar o cadastro
+// await testarCadastroCliente();
