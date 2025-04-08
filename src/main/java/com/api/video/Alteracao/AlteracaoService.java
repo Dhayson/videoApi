@@ -41,28 +41,32 @@ public class AlteracaoService {
         }
         UUID userId = userIdOpt.get();
 
-        // 2) Verifica se o projeto existe e pertence ao usuário logado
+        // 2) Verifica se o projeto pertence ao usuário logado
         Optional<Projeto> projetoOpt = projetoRepository.findById(projetoId);
         if (projetoOpt.isEmpty() || !projetoOpt.get().getCriadoPor().getId().equals(userId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Projeto não encontrado ou acesso negado.");
         }
 
-        // 3) Verifica se a task existe e pertence ao mesmo projeto (opcional)
+        // 3) Verifica se a task existe e pertence ao mesmo projeto
         Optional<Task> taskOpt = taskRepository.findById(taskId);
         if (taskOpt.isEmpty() || !taskOpt.get().getProjeto().getId().equals(projetoId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Task não encontrada ou não pertence ao projeto informado.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Task não encontrada ou não pertence ao projeto informado.");
         }
 
-        // 4) Cria a alteração
+        // 4) Define o timestamp atual (epoch time em segundos, por exemplo)
+        int currentTimestamp = (int) (System.currentTimeMillis() / 1000L);
+
+        // 5) Cria a alteração
         UUID alteracaoId = UUID.randomUUID();
-        LocalDate dataHoje = LocalDate.now();
         int rows = alteracaoRepository.criarAlteracao(
                 alteracaoId,
                 projetoId,
                 userId,             // autor = usuário logado
                 descricao,
-                dataHoje,           // data_alteracao
-                taskId              // referenciaTask
+                LocalDate.now(),    // data_alteracao
+                taskId,             // referenciaTask
+                currentTimestamp    // novo campo
         );
 
         if (rows > 0) {
@@ -73,7 +77,7 @@ public class AlteracaoService {
     }
 
     /**
-     * Atualiza uma alteração (ex.: descrição, data, e task de referência).
+     * Atualiza uma alteração (ex.: descrição, data, task e timestamp).
      */
     public void atualizarAlteracao(String chaveSessao, UUID alteracaoId, String descricao, LocalDate dataAlteracao, UUID taskId) {
         // 1) Verifica sessão
@@ -83,16 +87,19 @@ public class AlteracaoService {
         }
         UUID userId = userIdOpt.get();
 
-        // 2) Se quiser conferir se a nova task pertence ao mesmo projeto, seria preciso
-        //    buscar a Alteracao -> ver qual o Projeto -> e depois conferir se a Task nova
-        //    pertence a esse mesmo projeto. Depende da sua regra de negócio.
-        //    Abaixo, apenas demonstramos o update no repository. A checagem adicional é opcional.
+        // 2) Se quiser, valide também se a nova task ainda está dentro do mesmo projeto da Alteracao
+        //    Para isso, seria necessário buscar a Alteracao no BD e comparar.
+        //    Abaixo, apenas chamamos o repositório.
+
+        // 3) Atualiza o timestamp (exemplo: epoch time em segundos)
+        int currentTimestamp = (int) (System.currentTimeMillis() / 1000L);
 
         int updatedRows = alteracaoRepository.atualizarAlteracao(
                 alteracaoId,
                 descricao,
                 dataAlteracao,
                 taskId,
+                currentTimestamp,
                 userId
         );
         if (updatedRows <= 0) {
@@ -112,7 +119,6 @@ public class AlteracaoService {
         }
         UUID userId = userIdOpt.get();
 
-        // 2) Deleta se o projeto for do usuário
         int deletedRows = alteracaoRepository.deletarAlteracao(alteracaoId, userId);
         if (deletedRows <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -121,8 +127,7 @@ public class AlteracaoService {
     }
 
     /**
-     * Busca as alterações de um projeto. Usa a verificação do repositório para garantir
-     * que o projeto seja do usuário logado.
+     * Busca as alterações de um projeto. Retorna a lista de Alteracao.
      */
     public List<Alteracao> buscarAlteracoesPorProjeto(String chaveSessao, UUID projetoId) {
         Optional<UUID> userIdOpt = sessaoService.verificarSessao(chaveSessao);

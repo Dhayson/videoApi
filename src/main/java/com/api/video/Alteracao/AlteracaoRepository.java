@@ -17,8 +17,8 @@ public interface AlteracaoRepository extends JpaRepository<Alteracao, UUID> {
     @Transactional
     @Modifying
     @Query(value = """
-        INSERT INTO alteracoes (id, projeto_id, autor_id, descricao, data_alteracao, referencia_task)
-        VALUES (:id, :projetoId, :autorId, :descricao, :dataAlteracao, :referenciaTaskId)
+        INSERT INTO alteracoes (id, projeto_id, autor_id, descricao, data_alteracao, referencia_task, timestamp)
+        VALUES (:id, :projetoId, :autorId, :descricao, :dataAlteracao, :referenciaTaskId, :timestamp)
     """, nativeQuery = true)
     int criarAlteracao(
             @Param("id") UUID id,
@@ -26,7 +26,8 @@ public interface AlteracaoRepository extends JpaRepository<Alteracao, UUID> {
             @Param("autorId") UUID autorId,
             @Param("descricao") String descricao,
             @Param("dataAlteracao") LocalDate dataAlteracao,
-            @Param("referenciaTaskId") UUID referenciaTaskId
+            @Param("referenciaTaskId") UUID referenciaTaskId,
+            @Param("timestamp") int timestamp
     );
 
     @Transactional
@@ -35,7 +36,8 @@ public interface AlteracaoRepository extends JpaRepository<Alteracao, UUID> {
         UPDATE Alteracao a
         SET a.descricao = :descricao,
             a.dataAlteracao = :dataAlteracao,
-            a.referenciaTask.id = :taskId
+            a.referenciaTask.id = :taskId,
+            a.timestamp = :timestamp
         WHERE a.id = :alteracaoId
           AND a.projeto.criadoPor.id = :userId
     """)
@@ -44,6 +46,7 @@ public interface AlteracaoRepository extends JpaRepository<Alteracao, UUID> {
             @Param("descricao") String descricao,
             @Param("dataAlteracao") LocalDate dataAlteracao,
             @Param("taskId") UUID taskId,
+            @Param("timestamp") int timestamp,
             @Param("userId") UUID userId
     );
 

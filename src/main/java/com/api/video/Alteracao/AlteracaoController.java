@@ -15,7 +15,7 @@ public class AlteracaoController {
     @Autowired
     private AlteracaoService alteracaoService;
 
-    // DTO para criação (exemplo)
+    // DTO para criação
     public static class AlteracaoCreateDTO {
         private UUID projetoId;
         private UUID taskId;
@@ -31,7 +31,7 @@ public class AlteracaoController {
         public void setDescricao(String descricao) { this.descricao = descricao; }
     }
 
-    // DTO para atualização (exemplo)
+    // DTO para atualização
     public static class AlteracaoUpdateDTO {
         private String descricao;
         private LocalDate dataAlteracao;
@@ -47,12 +47,6 @@ public class AlteracaoController {
         public void setTaskId(UUID taskId) { this.taskId = taskId; }
     }
 
-    /**
-     * Criar Alteração
-     * Exemplo de requisição (POST /alteracoes/criar)
-     *  Body JSON: { "projetoId": "...", "taskId": "...", "descricao": "..." }
-     *  Header: chaveSessao=...
-     */
     @PostMapping("/criar")
     public ResponseEntity<String> criarAlteracao(
             @RequestHeader("chaveSessao") String chaveSessao,
@@ -66,12 +60,6 @@ public class AlteracaoController {
         return ResponseEntity.ok("Alteração criada com sucesso! ID: " + idAlteracao);
     }
 
-    /**
-     * Atualizar Alteração
-     * Exemplo de requisição (PUT /alteracoes/{id})
-     *  Body JSON: { "descricao": "...", "dataAlteracao": "2025-04-15", "taskId": "..." }
-     *  Header: chaveSessao=...
-     */
     @PutMapping("/{id}")
     public ResponseEntity<String> atualizarAlteracao(
             @RequestHeader("chaveSessao") String chaveSessao,
@@ -87,11 +75,6 @@ public class AlteracaoController {
         return ResponseEntity.ok("Alteração atualizada com sucesso!");
     }
 
-    /**
-     * Deletar Alteração
-     * Exemplo de requisição (DELETE /alteracoes/{id})
-     *  Header: chaveSessao=...
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletarAlteracao(
             @RequestHeader("chaveSessao") String chaveSessao,
@@ -100,11 +83,6 @@ public class AlteracaoController {
         return ResponseEntity.ok("Alteração deletada com sucesso!");
     }
 
-    /**
-     * Buscar Alterações de um Projeto
-     * Exemplo de requisição (GET /alteracoes/projeto/{projetoId})
-     *  Header: chaveSessao=...
-     */
     @GetMapping("/projeto/{projetoId}")
     public ResponseEntity<List<Alteracao>> buscarAlteracoesPorProjeto(
             @RequestHeader("chaveSessao") String chaveSessao,
