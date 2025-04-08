@@ -10,12 +10,25 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
 import { MainLayout } from "@/components/main-layout"
 import { VideoWithFeedback } from "@/components/video-with-feedback"
-import { criarTask, deletarTask, listarTasksPorProjeto} from "../../../endpoints/tasks"
-import { } from "../../../endpoints/projetos.js"
+import { criarTask, deletarTask, listarTasksPorProjeto, rpo} from "../../../endpoints/tasks"
+import { projectInfo} from "../../../endpoints/projetos.js"
 
 const mockTasks = [
   { id: 1, titulo: "Nome da task 1", date: "10/07/2023", status: "active" },
   { id: 2, titulo: "Nome da task 2", date: "11/07/2023", status: "active" },
+]
+
+const mockFeedbacks = [
+  {
+    id: 1,
+    timestamp: 3,
+    message: "Corrigir essa fala",
+  },
+  {
+    id: 2,
+    timestamp: 9,
+    message: "Adicionar legenda aqui",
+  }
 ]
 
 const initialFeedbacks = [
@@ -38,7 +51,7 @@ const mockAlteracoes = [
 
 export default function ProjetoPage() {
   const [projectId, setProjectId] = useState("")
-  const [projectUrl, setProjectUrl] = useState("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+  const [projectVideoUrl, setProjectVideoUrl] = useState("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
   const [searchTerm, setSearchTerm] = useState("")
   const [tasks, setTasks] = useState(mockTasks)
   const [alteracoes, setAlteracoes] = useState(mockAlteracoes)
@@ -78,6 +91,14 @@ export default function ProjetoPage() {
     const id = partes[2];
     setProjectId(id);
     console.log(id);
+
+    projectInfo(id).then(
+      res => {
+        console.log("Info do projeto:", res)
+        setProjectVideoUrl(res.data.urlVideo)
+        console.log(res.data.urlVideo)
+      }
+    )
 
     // const dados_proj = 
     listarTasksPorProjeto(id).then(
@@ -215,7 +236,7 @@ export default function ProjetoPage() {
             </CardHeader>
             <CardContent>
               <div className="aspect-video bg-black rounded-md overflow-hidden mb-4">
-                <VideoWithFeedback ref={videoRef} src={projectUrl} feedbacks={feedbacks} />
+                <VideoWithFeedback ref={videoRef} src={projectVideoUrl} feedbacks={feedbacks} />
               </div>
 
               <div className="mt-6 space-y-2">
