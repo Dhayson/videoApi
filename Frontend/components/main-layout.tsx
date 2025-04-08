@@ -16,9 +16,9 @@ export function MainLayout({ children }: MainLayoutProps) {
             <Link href="/home" className="text-gray-600 hover:text-blue-500">
               <Home className="h-5 w-5" />
             </Link>
-            <Link href="/perfil" className="text-gray-600 hover:text-blue-500">
+            {/* <Link href="/perfil" className="text-gray-600 hover:text-blue-500">
               <User className="h-5 w-5" />
-            </Link>
+            </Link> */}
             <Link href="/criar-projeto" className="text-gray-600 hover:text-blue-500">
               <FolderPlus className="h-5 w-5" />
             </Link>
