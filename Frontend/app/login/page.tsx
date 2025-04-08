@@ -28,6 +28,9 @@ export default function LoginPage() {
       setSessionId(Resposta.data)
       router.push("/home")
     }
+    else {
+      alert("login mal sucedido, tente novamente")
+    }
   }
 
   return (
