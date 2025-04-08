@@ -1,5 +1,6 @@
 package com.api.video.Projeto;
 
+import com.api.video.Projeto.DTO.ProjetoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class ProjetoController {
     /**
      * DTO simples para receber dados de criação/edição do projeto
      */
-    public static class ProjetoDTO {
+    public static class ProjetoDTOBuilder {
         private String nome;
         private String descricao;
 
@@ -46,7 +47,7 @@ public class ProjetoController {
     @PostMapping("/criar")
     public ResponseEntity<String> criarProjeto(
             @RequestHeader("chaveSessao") String chaveSessao,
-            @RequestBody ProjetoDTO dto) {
+            @RequestBody ProjetoDTOBuilder dto) {
         UUID projetoId = projetoService.criarProjeto(chaveSessao, dto.getNome(), dto.getDescricao());
         return ResponseEntity.ok("Projeto criado com sucesso! ID: " + projetoId);
     }
@@ -82,9 +83,10 @@ public class ProjetoController {
     }
 
     @GetMapping("/get")
-    public ResponseEntity<List<Projeto>> buscarProjetosDoUsuario(
-            @RequestHeader("chaveSessao") String chaveSessao) {
-        List<Projeto> projetos = projetoService.buscarProjetosDoUsuario(chaveSessao);
+    public ResponseEntity<List<ProjetoDTO>> buscarProjetosDoUsuario(
+            @RequestHeader("chaveSessao") String chaveSessao
+    ) {
+        List<ProjetoDTO> projetos = projetoService.buscarProjetosDoUsuario(chaveSessao);
         return ResponseEntity.ok(projetos);
     }
 }

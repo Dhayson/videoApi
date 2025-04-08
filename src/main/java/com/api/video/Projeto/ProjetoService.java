@@ -1,12 +1,15 @@
 package com.api.video.Projeto;
 
+import com.api.video.Projeto.DTO.ProjetoDTO;
 import com.api.video.Sessao.SessaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -81,16 +84,33 @@ public class ProjetoService {
         }
     }
 
-    public List<Projeto> buscarProjetosDoUsuario(String chaveSessao) {
-        // Verifica se a sessão é válida e obtém o ID do cliente
+    @Transactional(readOnly = true)
+    public List<ProjetoDTO> buscarProjetosDoUsuario(String chaveSessao) {
+        // 1) Verifica sessão
         Optional<UUID> clienteIdOpt = sessaoService.verificarSessao(chaveSessao);
         if (clienteIdOpt.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Sessão inválida ou expirada.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sessão inválida ou expirada.");
         }
-        UUID clienteId = clienteIdOpt.get();
 
-        // Busca todos os projetos criados por este cliente
-        return projetoRepository.findProjetosByCliente(clienteId);
+        // 2) Busca os projetos deste cliente
+        UUID clienteId = clienteIdOpt.get();
+        List<Projeto> projetos = projetoRepository.findProjetosByCliente(clienteId);
+
+        // 3) Mapeia cada Projeto -> ProjetoDTO
+        List<ProjetoDTO> dtoList = new ArrayList<>();
+        for (Projeto p : projetos) {
+            // p.getCriadoPor() não deve dar LazyInitException porque estamos em @Transactional(readOnly = true)
+            // e fetch = LAZY funciona dentro do escopo transacional
+            String nomeUsuario = (p.getCriadoPor() != null) ? p.getCriadoPor().getNome() : null;
+
+            ProjetoDTO dto = new ProjetoDTO(
+                    p.getId(),
+                    p.getNome(),
+                    p.getDescricao(),
+                    nomeUsuario
+            );
+            dtoList.add(dto);
+        }
+        return dtoList;
     }
 }
