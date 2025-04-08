@@ -50,7 +50,7 @@ async function clientInfo() {
       return { sucesso: false, erro: errorData };
     }
 
-    const responseData = await response.text();
+    const responseData = await response.json();
     console.log("Dados do usuário:", responseData);
     return { sucesso: true, data: responseData };
   } catch (error) {
