@@ -64,16 +64,19 @@ export default function ProjetoPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(dataEntrega)
-    const Resposta = criarTask(
+    criarTask(
       titulo,
       descricao,
       prioridade,
       dataEntrega.toString(),
       projectId
+    ).then(
+      Resposta => {
+        console.log(Resposta)
+        setMostrarForm(false)
+        window.location.reload();
+      }
     )
-    console.log(Resposta)
-    setMostrarForm(false)
-    window.location.reload();
   };
 
   const [titulo, setTitulo] = useState('');
