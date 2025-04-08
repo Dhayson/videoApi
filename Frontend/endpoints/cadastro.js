@@ -6,7 +6,7 @@ async function cadastrarCliente(
   dataDeNascimento,
   plataformas
 ) {
-  const url = "http://localhost:8080/api/v1/usuario/cadastrocliente";
+  const url = "http://198.74.53.107:8080/api/v1/usuario/cadastrocliente";
   const headers = {
     "Content-Type": "application/json",
   };
@@ -85,9 +85,9 @@ async function testarCadastroCliente() {
 
 export { cadastrarCliente };
 
-// Descomente isso para testar com o node
+// // Descomente isso para testar com o node
 // import LocalStorage from "node-localstorage";
 // const localStorage = new LocalStorage.LocalStorage("./scratch");
 
-// Chamar a função de teste para executar o cadastro
+// // Chamar a função de teste para executar o cadastro
 // await testarCadastroCliente();

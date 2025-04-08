@@ -1,7 +1,7 @@
 import { getSessionId, setSessionId, efetuarLogin } from "./login.js";
 
-async function criarProjeto(nome, descricao) {
-  const url = "http://localhost:8080/api/v1/projetos/criar";
+async function criarProjeto(nome, url_proj, descricao) {
+  const url = "http://198.74.53.107:8080/api/v1/projetos/criar";
 
   const session_id = getSessionId();
   const headers = {
@@ -10,6 +10,7 @@ async function criarProjeto(nome, descricao) {
   };
   const body = JSON.stringify({
     nome: nome,
+    urlVideo: url_proj,
     descricao: descricao,
   });
 
@@ -60,6 +61,7 @@ async function testarCriarProjeto() {
   console.log("\nIniciando teste de criação de projeto...");
   const resultadoCriacao = await criarProjeto(
     nomeProjetoTeste,
+    "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     descricaoProjetoTeste
   );
 
@@ -80,6 +82,7 @@ async function testarCriarProjeto() {
   console.log("\nIniciando outro teste de criação de projeto...");
   const resultadoCriacao2 = await criarProjeto(
     "Outro Projeto",
+    "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     "Uma descrição diferente."
   );
 
@@ -98,7 +101,7 @@ async function testarCriarProjeto() {
 
 async function deletarProjeto(projetoId) {
   const chaveSessao = getSessionId();
-  const url = `http://localhost:8080/api/v1/projetos/${projetoId}`;
+  const url = `http://198.74.53.107:8080/api/v1/projetos/${projetoId}`;
   const headers = {
     chaveSessao: chaveSessao,
   };
@@ -175,7 +178,7 @@ async function testarDeletarProjeto() {
 
 async function listarProjetosDoUsuario() {
   const chaveSessao = getSessionId();
-  const url = "http://localhost:8080/api/v1/projetos/get";
+  const url = "http://198.74.53.107:8080/api/v1/projetos/get";
   const headers = {
     chaveSessao: chaveSessao,
   };
@@ -237,7 +240,7 @@ async function testarListarProjetos() {
 
 async function editarProjeto(projetoId, nome, descricao) {
   const chaveSessao = getSessionId();
-  const url = `http://localhost:8080/api/v1/projetos/${projetoId}`;
+  const url = `http://198.74.53.107:8080/api/v1/projetos/${projetoId}`;
   const headers = {
     chaveSessao: chaveSessao,
     "Content-Type": "application/json",

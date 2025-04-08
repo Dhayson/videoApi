@@ -9,7 +9,7 @@ async function criarTask(
   projetoId
 ) {
   const session_id = getSessionId();
-  const url = "http://localhost:8080/api/v1/tasks/criar";
+  const url = "http://198.74.53.107:8080/api/v1/tasks/criar";
   const headers = {
     chaveSessao: session_id,
     "Content-Type": "application/json",
@@ -54,7 +54,11 @@ async function testarCriarTask() {
   const nomeProjetoTeste = "Projeto de Teste JavaScript";
   const descricaoProjetoTeste =
     "Este é um projeto criado via teste em JavaScript.";
-  const projeto = await criarProjeto(nomeProjetoTeste, descricaoProjetoTeste);
+  const projeto = await criarProjeto(
+    nomeProjetoTeste,
+    "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    descricaoProjetoTeste
+  );
   // Substitua por um ID de projeto existente ao qual a task será associada
   console.log("Usando projeto", projeto);
   const projetoIdTeste = projeto.id;
@@ -145,7 +149,7 @@ var id_meu_projeto;
 
 async function deletarTask(taskId) {
   const chaveSessao = getSessionId();
-  const url = `http://localhost:8080/api/v1/tasks/${taskId}`;
+  const url = `http://198.74.53.107:8080/api/v1/tasks/${taskId}`;
   const headers = {
     chaveSessao: chaveSessao,
   };
@@ -270,26 +274,26 @@ async function testarListarTasksPorProjeto() {
     console.log("Teste de listagem de tasks bem-sucedido!");
     if (resultadoListagem.data && Array.isArray(resultadoListagem.data)) {
       if (resultadoListagem.data.length > 0) {
-        console.log("Tasks encontradas:");
-        resultadoListagem.data.forEach((task) => {
-          console.log(`- ID: ${task.id}`);
-          console.log(`  Título: ${task.titulo}`);
-          console.log(`  Descrição: ${task.descricao}`);
-          console.log(`  Prioridade: ${task.prioridade}`);
-          console.log(`  Data de Criação: ${task.dataCriacao}`);
-          console.log(`  Data de Entrega: ${task.dataEntrega}`);
-          if (task.responsavel) {
-            console.log(
-              `  Responsável: ${task.responsavel.nome} (ID: ${task.responsavel.id})`
-            );
-          }
-          if (task.projeto) {
-            console.log(
-              `  Projeto: ${task.projeto.nome} (ID: ${task.projeto.id})`
-            );
-          }
-          console.log("---");
-        });
+        // console.log("Tasks encontradas:");
+        // resultadoListagem.data.forEach((task) => {
+        //   console.log(`- ID: ${task.id}`);
+        //   console.log(`  Título: ${task.titulo}`);
+        //   console.log(`  Descrição: ${task.descricao}`);
+        //   console.log(`  Prioridade: ${task.prioridade}`);
+        //   console.log(`  Data de Criação: ${task.dataCriacao}`);
+        //   console.log(`  Data de Entrega: ${task.dataEntrega}`);
+        //   if (task.responsavel) {
+        //     console.log(
+        //       `  Responsável: ${task.responsavel.nome} (ID: ${task.responsavel.id})`
+        //     );
+        //   }
+        //   if (task.projeto) {
+        //     console.log(
+        //       `  Projeto: ${task.projeto.nome} (ID: ${task.projeto.id})`
+        //     );
+        //   }
+        //   console.log("---");
+        // });
       } else {
         console.log(
           `Nenhuma task encontrada para o projeto com ID ${projetoIdTeste}.`
@@ -327,9 +331,9 @@ async function testarListarTasksPorProjeto() {
   }
 }
 
-export { criarTask, deletarTask };
+export { criarTask, deletarTask, listarTasksPorProjeto };
 
-// Chamar a função de teste para executar a criação de task
+// // Chamar a função de teste para executar a criação de task
 // await testarCriarTask();
 
 // // Chamar a função de teste para executar a deleção de task
@@ -337,6 +341,6 @@ export { criarTask, deletarTask };
 
 // await testarListarTasksPorProjeto();
 
-// // Descomente isso para testar com o node
+// // // Descomente isso para testar com o node
 // import LocalStorage from "node-localstorage";
 // const localStorage = new LocalStorage.LocalStorage("./scratch");

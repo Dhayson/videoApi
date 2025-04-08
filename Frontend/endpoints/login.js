@@ -1,5 +1,5 @@
 async function efetuarLogin(user, senha) {
-  const url = `http://localhost:8080/api/v1/usuario/login?user=${encodeURIComponent(
+  const url = `http://198.74.53.107:8080/api/v1/usuario/login?user=${encodeURIComponent(
     user
   )}&senha=${encodeURIComponent(senha)}`;
 
@@ -36,7 +36,7 @@ function getSessionId() {
 
 async function clientInfo() {
   const session_id = getSessionId();
-  const url = `http://localhost:8080/api/v1/usuario/getinfo?keySessao=${encodeURIComponent(
+  const url = `http://198.74.53.107:8080/api/v1/usuario/getinfo?keySessao=${encodeURIComponent(
     session_id
   )}`;
   try {
@@ -111,10 +111,10 @@ async function testarLogin() {
 
 export { efetuarLogin, getSessionId, setSessionId, clientInfo };
 
-// Descomente isso para testar com o node
+// // // Descomente isso para testar com o node
 // import LocalStorage from "node-localstorage";
 // const localStorage = new LocalStorage.LocalStorage("./scratch");
 
-// Chamar a função de teste para executar o login
+// // Chamar a função de teste para executar o login
 // await testarLogin();
 // await testarClientInfo();
