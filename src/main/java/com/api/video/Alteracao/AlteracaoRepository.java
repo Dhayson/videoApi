@@ -18,11 +18,11 @@ public interface AlteracaoRepository extends JpaRepository<Sessao, UUID> {
     @Transactional
     @Modifying
     @Query(value = """
-        INSERT INTO sessao (id, id_usuario, chave_sessao, chave_token, horario_login, expired)
-        VALUES (:id, :idUsuario, :chaveSessao, :chaveToken, :currentTime, false)
+        INSERT INTO sessao (id, id_usuario, chave_sessao, horario_login, expired)
+        VALUES (:id, :idUsuario, :chaveSessao, :currentTime, false)
     """, nativeQuery = true)
     void registrarAlteracao(@Param("id") UUID id, @Param("projetoID") UUID projetoID, @Param("chaveSessao") String chaveSessao,
-                         @Param("chaveToken") String chaveToken, @Param("currentTime") LocalDateTime currentTime);
+                         @Param("currentTime") LocalDateTime currentTime);
 
     @Query("""
         SELECT s.expired

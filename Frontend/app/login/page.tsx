@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Logo } from "@/components/logo"
+import { efetuarLogin, setSessionId } from "@/endpoints/login"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -17,10 +18,16 @@ export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     // Em um cenário real, aqui faria a autenticação
-    router.push("/home")
+    const Resposta = await efetuarLogin(email, password)
+    if (Resposta.sucesso) {
+      console.log(Resposta.data)
+      setSessionId(Resposta.data)
+      router.push("/home")
+    }
   }
 
   return (

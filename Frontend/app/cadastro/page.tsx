@@ -11,15 +11,23 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Logo } from "@/components/logo"
+import { cadastrarCliente } from "@/endpoints/cadastro"
 
 export default function CadastroPage() {
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
+  const [senha, setSenha] = useState("")
+  const [nome, setNome] = useState("")
+  const [email, setEmail] = useState("")
+  const [cpf, setCPF] = useState("")
+  const [dataNascimento, setDataNascimento] = useState("")
+  const [plataformas, setPlataformas] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     // Em um cenário real, aqui faria o cadastro
-    router.push("/login")
+    const Resposta = cadastrarCliente(nome, email, senha, cpf, dataNascimento, plataformas)
+    console.log(Resposta)
   }
 
   return (
@@ -32,12 +40,12 @@ export default function CadastroPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="nome">Nome</Label>
-            <Input id="nome" placeholder="Digite seu nome..." required />
+            <Input id="nome" onChange={(e) => setNome(e.target.value)} placeholder="Digite seu nome..." required/>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="email">E-mail</Label>
-            <Input id="email" type="email" placeholder="Digite seu email..." required />
+            <Input id="email" type="email" onChange={(e) => setEmail(e.target.value)} placeholder="Digite seu email..." required />
           </div>
 
           <div className="space-y-2">
@@ -46,6 +54,7 @@ export default function CadastroPage() {
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
+                onChange={(e) => setSenha(e.target.value)}
                 placeholder="Digite sua senha..."
                 required
               />
@@ -62,15 +71,15 @@ export default function CadastroPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="cpf">CPF</Label>
-              <Input id="cpf" placeholder="Digite seu CPF..." required />
+              <Input id="cpf" onChange={(e) => setCPF(e.target.value)} placeholder="Digite seu CPF..." required />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="dataNascimento">Data de nascimento</Label>
-              <Input id="dataNascimento" type="date" placeholder="dd/mm/aaaa" required />
+              <Input id="dataNascimento" type="date" onChange={(e) => setDataNascimento(e.target.value)} placeholder="dd/mm/aaaa" required />
             </div>
           </div>
-
+{/* 
           <div className="space-y-2">
             <Label>Você é</Label>
             <RadioGroup defaultValue="produtor" className="flex space-x-4">
@@ -83,11 +92,11 @@ export default function CadastroPage() {
                 <Label htmlFor="patrocinador">Patrocinador</Label>
               </div>
             </RadioGroup>
-          </div>
+          </div> */}
 
           <div className="space-y-2">
             <Label htmlFor="plataformas">Plataformas que trabalha</Label>
-            <Input id="plataformas" placeholder="Digite suas plataformas de trabalho..." />
+            <Input id="plataformas" onChange={(e) => setPlataformas(e.target.value)} placeholder="Digite suas plataformas de trabalho..." />
           </div>
 
           <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600">
