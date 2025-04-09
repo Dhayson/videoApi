@@ -10,12 +10,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
 import { MainLayout } from "@/components/main-layout"
 import { VideoWithFeedback } from "@/components/video-with-feedback"
-import { criarTask, deletarTask, listarTasksPorProjeto, rpo} from "../../../endpoints/tasks"
+import { criarTask, deletarTask, listarTasksPorProjeto} from "../../../endpoints/tasks"
 import { projectInfo} from "../../../endpoints/projetos.js"
 
 const mockTasks = [
-  { id: 1, titulo: "Nome da task 1", date: "10/07/2023", status: "active" },
-  { id: 2, titulo: "Nome da task 2", date: "11/07/2023", status: "active" },
+  // { id: 1, titulo: "Nome da task 1", date: "10/07/2023", status: "active" },
+  // { id: 2, titulo: "Nome da task 2", date: "11/07/2023", status: "active" },
 ]
 
 const mockFeedbacks = [
@@ -51,6 +51,7 @@ const mockAlteracoes = [
 
 export default function ProjetoPage() {
   const [projectId, setProjectId] = useState("")
+  const [projectNome, setProjectNome] = useState("")
   const [projectVideoUrl, setProjectVideoUrl] = useState("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
   const [searchTerm, setSearchTerm] = useState("")
   const [tasks, setTasks] = useState(mockTasks)
@@ -73,8 +74,13 @@ export default function ProjetoPage() {
     ).then(
       Resposta => {
         console.log(Resposta)
-        setMostrarForm(false)
-        window.location.reload();
+        if (Resposta.sucesso) {
+          setMostrarForm(false)
+          window.location.reload();
+        }
+        else {
+          window.alert("Falhou em criar task. Tente novamente.")
+        }
       }
     )
   };
@@ -99,6 +105,7 @@ export default function ProjetoPage() {
       res => {
         console.log("Info do projeto:", res)
         setProjectVideoUrl(res.data.urlVideo)
+        setProjectNome(res.data.titulo)
         console.log(res.data.urlVideo)
       }
     )
@@ -234,7 +241,7 @@ export default function ProjetoPage() {
             <CardHeader className="flex flex-row items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Logo className="h-8 w-8" />
-                <CardTitle className="text-xl text-blue-600">Nome do projeto</CardTitle>
+                <CardTitle className="text-xl text-blue-600">{projectNome}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>

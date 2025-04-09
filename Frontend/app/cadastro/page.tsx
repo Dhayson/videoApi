@@ -25,9 +25,17 @@ export default function CadastroPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Em um cenário real, aqui faria o cadastro
-    const Resposta = cadastrarCliente(nome, email, senha, cpf, dataNascimento, plataformas)
-    console.log(Resposta)
+    cadastrarCliente(nome, email, senha, cpf, dataNascimento, plataformas).then(
+      Resposta => {
+        console.log(Resposta)
+        if (Resposta.sucesso) {
+          router.push("/login")
+        }
+        else {
+          window.alert("Erro ao realizar cadastro.")
+        }
+      }
+    )
   }
 
   return (

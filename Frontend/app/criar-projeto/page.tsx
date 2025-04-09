@@ -28,7 +28,12 @@ export default function CriarProjetoPage() {
     e.preventDefault()
     const Resposta = await criarProjeto(nome, url, desc)
     console.log(Resposta)
-    router.push("/projeto/" + Resposta.id)
+    if (Resposta.sucesso) {
+      router.push("/projeto/" + Resposta.id)
+    }
+    else {
+      window.alert("Erro ao criar projeto")
+    }
   }
 
   const [nome, setNome] = useState("")
