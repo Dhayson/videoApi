@@ -1,7 +1,8 @@
 import { getSessionId, setSessionId, efetuarLogin } from "./login.js";
+import { isNode } from "./isNode.mjs";
 
 async function criarProjeto(nome, url_proj, descricao) {
-  const url = "http://198.74.53.107:8080/api/v1/projetos/criar";
+  const url = "http://localhost:8080/api/v1/projetos/criar";
 
   const session_id = getSessionId();
   const headers = {
@@ -101,7 +102,7 @@ async function testarCriarProjeto() {
 
 async function deletarProjeto(projetoId) {
   const chaveSessao = getSessionId();
-  const url = `http://198.74.53.107:8080/api/v1/projetos/${projetoId}`;
+  const url = `http://localhost:8080/api/v1/projetos/${projetoId}`;
   const headers = {
     chaveSessao: chaveSessao,
   };
@@ -178,7 +179,7 @@ async function testarDeletarProjeto() {
 
 async function listarProjetosDoUsuario() {
   const chaveSessao = getSessionId();
-  const url = "http://198.74.53.107:8080/api/v1/projetos/get";
+  const url = "http://localhost:8080/api/v1/projetos/get";
   const headers = {
     chaveSessao: chaveSessao,
   };
@@ -240,7 +241,7 @@ async function testarListarProjetos() {
 
 async function editarProjeto(projetoId, nome, descricao) {
   const chaveSessao = getSessionId();
-  const url = `http://198.74.53.107:8080/api/v1/projetos/${projetoId}`;
+  const url = `http://localhost:8080/api/v1/projetos/${projetoId}`;
   const headers = {
     chaveSessao: chaveSessao,
     "Content-Type": "application/json",
@@ -331,7 +332,7 @@ async function testarEditarProjeto() {
 }
 
 async function projectInfo(idProj) {
-  const url = `http://198.74.53.107:8080/api/v1/projetos/getProjeto/${encodeURIComponent(
+  const url = `http://localhost:8080/api/v1/projetos/getProjeto/${encodeURIComponent(
     idProj
   )}`;
   const chaveSessao = getSessionId();
@@ -363,25 +364,15 @@ async function projectInfo(idProj) {
   }
 }
 
-// Chamar a função de teste para executar a criação de projeto
-// await testarCriarProjeto();
-
-// // // Chamar a função de teste para executar a deleção de projeto
-// await testarDeletarProjeto();
-
-// // // Chamar a função de teste para executar a listagem de projetos
-// await testarListarProjetos();
-
-// // // Chamar a função de teste para executar a edição de projeto
-// await testarEditarProjeto();
-
-// // Descomente isso para testar com o node
-if (typeof window === "undefined") {
-  var localStorage2;
-  // Estamos no Node.js
-  import("node-localstorage").then(({ LocalStorage: LS }) => {
-    localStorage2 = new LS("./scratch");
-  });
+if (isNode()) {
+  // Chamar a função de teste para executar a criação de projeto
+  // await testarCriarProjeto();
+  // // // Chamar a função de teste para executar a deleção de projeto
+  // await testarDeletarProjeto();
+  // // // Chamar a função de teste para executar a listagem de projetos
+  // await testarListarProjetos();
+  // // // Chamar a função de teste para executar a edição de projeto
+  // await testarEditarProjeto();
 }
 
 export {

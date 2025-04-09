@@ -1,5 +1,7 @@
+import { isNode, localStorage2 } from "./isNode.mjs";
+
 async function efetuarLogin(user, senha) {
-  const url = `http://198.74.53.107:8080/api/v1/usuario/login?user=${encodeURIComponent(
+  const url = `http://localhost:8080/api/v1/usuario/login?user=${encodeURIComponent(
     user
   )}&senha=${encodeURIComponent(senha)}`;
 
@@ -27,7 +29,7 @@ async function efetuarLogin(user, senha) {
 }
 
 function setSessionId(session_id) {
-  if (typeof window === "undefined") {
+  if (isNode()) {
     localStorage2.setItem("sessionID", session_id);
   } else {
     localStorage.setItem("sessionID", session_id);
@@ -35,7 +37,7 @@ function setSessionId(session_id) {
 }
 
 function getSessionId() {
-  if (typeof window === "undefined") {
+  if (isNode()) {
     return localStorage2.getItem("sessionID");
   } else {
     return localStorage.getItem("sessionID");
@@ -44,7 +46,7 @@ function getSessionId() {
 
 async function clientInfo() {
   const session_id = getSessionId();
-  const url = `http://198.74.53.107:8080/api/v1/usuario/getinfo?keySessao=${encodeURIComponent(
+  const url = `http://localhost:8080/api/v1/usuario/getinfo?keySessao=${encodeURIComponent(
     session_id
   )}`;
   try {
@@ -119,14 +121,8 @@ async function testarLogin() {
 
 export { efetuarLogin, getSessionId, setSessionId, clientInfo };
 
-// // // Descomente isso para testar com o node
-if (typeof window === "undefined") {
-  var localStorage2;
-  // Estamos no Node.js
-  import("node-localstorage").then(({ LocalStorage: LS }) => {
-    localStorage2 = new LS("./scratch");
-  });
+if (isNode()) {
+  // // Chamar a função de teste para executar o login
+  // await testarLogin();
+  // await testarClientInfo();
 }
-// // Chamar a função de teste para executar o login
-// await testarLogin();
-// await testarClientInfo();

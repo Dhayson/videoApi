@@ -1,3 +1,4 @@
+import { isNode } from "./isNode.mjs";
 async function cadastrarCliente(
   nome,
   email,
@@ -6,7 +7,8 @@ async function cadastrarCliente(
   dataDeNascimento,
   plataformas
 ) {
-  const url = "http://198.74.53.107:8080/api/v1/usuario/cadastrocliente";
+  //const url = "http://198.74.53.107:8080/api/v1/usuario/cadastrocliente";
+  const url = "http://localhost:8080/api/v1/usuario/cadastrocliente";
   const headers = {
     "Content-Type": "application/json",
   };
@@ -85,14 +87,7 @@ async function testarCadastroCliente() {
 
 export { cadastrarCliente };
 
-// // Descomente isso para testar com o node
-if (typeof window === "undefined") {
-  var localStorage2;
-  // Estamos no Node.js
-  import("node-localstorage").then(({ LocalStorage: LS }) => {
-    localStorage2 = new LS("./scratch");
-  });
-
+if (isNode()) {
   // Chamar a função de teste para executar o cadastro
   await testarCadastroCliente();
 }

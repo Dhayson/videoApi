@@ -1,5 +1,6 @@
 import { criarProjeto } from "./projetos.js";
 import { getSessionId, setSessionId, efetuarLogin } from "./login.js";
+import { isNode } from "./isNode.mjs";
 
 async function criarTask(
   titulo,
@@ -9,7 +10,7 @@ async function criarTask(
   projetoId
 ) {
   const session_id = getSessionId();
-  const url = "http://198.74.53.107:8080/api/v1/tasks/criar";
+  const url = "http://localhost:8080/api/v1/tasks/criar";
   const headers = {
     chaveSessao: session_id,
     "Content-Type": "application/json",
@@ -149,7 +150,7 @@ var id_meu_projeto;
 
 async function deletarTask(taskId) {
   const chaveSessao = getSessionId();
-  const url = `http://198.74.53.107:8080/api/v1/tasks/${taskId}`;
+  const url = `http://localhost:8080/api/v1/tasks/${taskId}`;
   const headers = {
     chaveSessao: chaveSessao,
   };
@@ -223,7 +224,7 @@ async function testarDeletarTask() {
 
 async function listarTasksPorProjeto(projetoId) {
   const chaveSessao = getSessionId();
-  const url = `http://198.74.53.107:8080/api/v1/tasks/projeto/${projetoId}`;
+  const url = `http://localhost:8080/api/v1/tasks/projeto/${projetoId}`;
   const headers = {
     chaveSessao: chaveSessao,
   };
@@ -333,19 +334,10 @@ async function testarListarTasksPorProjeto() {
 
 export { criarTask, deletarTask, listarTasksPorProjeto };
 
-// // Chamar a função de teste para executar a criação de task
-// await testarCriarTask();
-
-// // Chamar a função de teste para executar a deleção de task
-// await testarDeletarTask();
-
-// await testarListarTasksPorProjeto();
-
-// // // Descomente isso para testar com o node
-if (typeof window === "undefined") {
-  var localStorage2;
-  // Estamos no Node.js
-  import("node-localstorage").then(({ LocalStorage: LS }) => {
-    localStorage2 = new LS("./scratch");
-  });
+if (isNode()) {
+  // // Chamar a função de teste para executar a criação de task
+  // await testarCriarTask();
+  // // Chamar a função de teste para executar a deleção de task
+  // await testarDeletarTask();
+  // await testarListarTasksPorProjeto();
 }

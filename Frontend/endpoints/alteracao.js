@@ -1,5 +1,6 @@
 import { getSessionId, setSessionId, efetuarLogin } from "./login.js";
 import { criarProjeto } from "./projetos.js";
+import { isNode } from "./isNode.mjs";
 
 var id_alteracao_1;
 var id_projeto;
@@ -325,14 +326,11 @@ async function testarListarAlteracoesPorProjeto() {
   }
 }
 
-// // // Descomente isso para testar com o node
-if (typeof window === "undefined") {
-  var localStorage2;
-  // Estamos no Node.js
-  import("node-localstorage").then(({ LocalStorage: LS }) => {
-    localStorage2 = new LS("./scratch");
-  });
+export { criarAlteracao, listarAlteracoesPorProjeto };
 
+// // // Descomente isso para testar com o node
+
+if (isNode()) {
   // Chamar a função de teste para executar a criação de alteração
   await testarCriarAlteracao();
 
