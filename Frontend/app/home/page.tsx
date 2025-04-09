@@ -182,7 +182,7 @@ export default function HomePage() {
                   engagementRate={75}
                   // Se alguém resolver isso, vai ser massa.
                   // Dá para por um url no projeto na database
-                  videoSrc={projects[0]?.src || "https://www.w3schools.com/html/mov_bbb.mp4"}
+                  videoSrc={projects[0]?.urlVideo || null}
                   feedbacks={mockFeedbacks}
                   className="h-full" // <-- importante se o componente aceitar props de classe
                 />
@@ -190,7 +190,7 @@ export default function HomePage() {
                   title="Projeto 2"
                   notifications={3}
                   engagementRate={60}
-                  videoSrc={projects[1]?.src || "https://www.w3schools.com/html/mov_bbb.mp4"}
+                  videoSrc={projects[1]?.urlVideo || null}
                   feedbacks={mockFeedbacks}
                   className="h-full"
                 />
