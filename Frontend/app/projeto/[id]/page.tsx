@@ -11,42 +11,17 @@ import { Logo } from "@/components/logo"
 import { MainLayout } from "@/components/main-layout"
 import { VideoWithFeedback } from "@/components/video-with-feedback"
 import { criarTask, deletarTask, listarTasksPorProjeto} from "../../../endpoints/tasks"
-import { projectInfo} from "../../../endpoints/projetos.js"
+import { projectInfo } from "../../../endpoints/projetos.js"
+import { listarAlteracoesPorProjeto, criarAlteracao} from "../../../endpoints/alteracao"
 
 const mockTasks = [
   // { id: 1, titulo: "Nome da task 1", date: "10/07/2023", status: "active" },
   // { id: 2, titulo: "Nome da task 2", date: "11/07/2023", status: "active" },
 ]
 
-const mockFeedbacks = [
-  {
-    id: 1,
-    timestamp: 3,
-    message: "Corrigir essa fala",
-  },
-  {
-    id: 2,
-    timestamp: 9,
-    message: "Adicionar legenda aqui",
-  }
-]
-
-const initialFeedbacks = [
-  {
-    id: 1,
-    timestamp: 3,
-    message: "Corrigir essa fala",
-  },
-  {
-    id: 2,
-    timestamp: 9,
-    message: "Adicionar legenda aqui",
-  }
-]
-
 const mockAlteracoes = [
-  { id: 1, name: "Alteração 1", status: "active" },
-  { id: 2, name: "Alteração 2", status: "inactive" },
+  // { id: 1, descricao: "Alteração 1", timestamp: 2 },
+  // { id: 2, descricao: "Alteração 777", timestamp: 3 },
 ]
 
 export default function ProjetoPage() {
@@ -57,8 +32,7 @@ export default function ProjetoPage() {
   const [tasks, setTasks] = useState(mockTasks)
   const [alteracoes, setAlteracoes] = useState(mockAlteracoes)
   const [selectedAlteracao, setSelectedAlteracao] = useState<string | null>(null)
-  const [feedbacks, setFeedbacks] = useState(initialFeedbacks)
-  const [newFeedbackText, setNewFeedbackText] = useState("")
+  const [newAlteracaoText, setNewFeedbackText] = useState("")
   const videoRef = useRef<HTMLVideoElement>(null)
 
 
@@ -76,7 +50,7 @@ export default function ProjetoPage() {
         console.log(Resposta)
         if (Resposta.sucesso) {
           setMostrarForm(false)
-          window.location.reload();
+          updateTasks();
         }
         else {
           window.alert("Falhou em criar task. Tente novamente.")
@@ -92,6 +66,36 @@ export default function ProjetoPage() {
   const [dataEntrega, setDataEntrega] = useState('');
 
   const filteredTasks = tasks.filter((task) => task.titulo.toLowerCase().includes(searchTerm.toLowerCase()))
+
+  function updateAlteracoes() {
+    listarAlteracoesPorProjeto(projectId).then(
+            res => {
+              console.log("Alterações:", res)
+              if (res.sucesso) {
+                setAlteracoes(res.data)
+              }
+              else {
+                window.alert("Erro ao recuperar alterações")
+              }
+            }
+          )
+  }
+
+  function updateTasks() {
+    listarTasksPorProjeto(projectId).then(
+      res => {
+        setTasks(res.data)
+        console.log(res)
+      }
+    )
+  }
+
+  useEffect(() => {
+    if (projectId !== "") {
+      updateAlteracoes()
+      updateTasks()
+    }
+  }, [projectId]);
 
   useEffect(() => {
     // Essa função roda uma vez, quando o componente monta (inicializa)
@@ -109,14 +113,6 @@ export default function ProjetoPage() {
         console.log(res.data.urlVideo)
       }
     )
-
-    // const dados_proj = 
-    listarTasksPorProjeto(id).then(
-      res => {
-        setTasks(res.data)
-        console.log(res)
-      }
-    )
   }, []); // <- Array com id
 
   const handleRemoveTask = (id: number) => {
@@ -130,16 +126,21 @@ export default function ProjetoPage() {
     setMostrarForm(true);
   }
 
-  const handleCreateFeedback = () => {
+  const handleCreateAlteracao = () => {
     if (!videoRef.current) return
+    const descricao = newAlteracaoText;
     const timestamp = Math.floor(videoRef.current.currentTime)
-    const newFeedback = {
-      id: feedbacks.length + 1,
-      timestamp,
-      message: newFeedbackText
-    }
-    setFeedbacks([...feedbacks, newFeedback])
-    setNewFeedbackText("")
+    criarAlteracao(projectId, timestamp, descricao).then(
+      res => {
+        if (res.sucesso) {
+          setNewFeedbackText("")
+          updateAlteracoes()
+        }
+        else {
+          window.alert("Erro ao criar feedback")
+        }
+      }
+    )
   }
 
   return (
@@ -246,42 +247,39 @@ export default function ProjetoPage() {
             </CardHeader>
             <CardContent>
               <div className="aspect-video bg-black rounded-md overflow-hidden mb-4">
-                <VideoWithFeedback ref={videoRef} src={projectVideoUrl} feedbacks={feedbacks} />
+                <VideoWithFeedback ref={videoRef} src={projectVideoUrl} feedbacks={alteracoes} />
               </div>
 
               <div className="mt-6 space-y-2">
-                <h3 className="font-medium text-gray-700">Escreva um feedback</h3>
+                <h3 className="font-medium text-gray-700">Escreva uma alteração</h3>
                 <Textarea
-                  placeholder="Digite seu feedback..."
+                  placeholder="Digite sua sugestão de alteração..."
                   className="h-20"
-                  value={newFeedbackText}
+                  value={newAlteracaoText}
                   onChange={(e) => setNewFeedbackText(e.target.value)}
                 />
-                <Button onClick={handleCreateFeedback} className="bg-green-500 hover:bg-green-600 w-full">
-                  Criar Feedback no timestamp atual
+                <Button onClick={handleCreateAlteracao} className="bg-green-500 hover:bg-green-600 w-full">
+                  Criar sugestão no timestamp atual
                 </Button>
               </div>
 
               <div className="grid grid-cols-2 gap-4 mt-6">
                 <div className="space-y-2">
-                  <h3 className="font-medium text-gray-700">Alterações requisitadas</h3>
+                  <h3 className="font-medium text-gray-700">Alterações</h3>
                   <div className="bg-gray-100 rounded-lg h-[250px] overflow-hidden flex flex-col">
                     <div className="grid grid-cols-2 text-sm font-medium text-gray-500 px-3 py-2 border-b border-gray-200">
                       <span>Nome</span>
-                      <span className="text-right">Status</span>
+                      <span className="text-right">Timestamp</span>
                     </div>
                     <div className="flex-1 overflow-y-auto scroll-slim px-3 py-2 space-y-2">
                       {alteracoes.map((alteracao) => (
                         <div key={alteracao.id} className="flex justify-between items-center text-sm">
                           <span className="flex items-center space-x-2">
                             <span>•</span>
-                            <span>{alteracao.name}</span>
+                            <span>{alteracao.descricao}</span>
                           </span>
-                          <div
-                            className={`h-4 w-4 rounded-full ${
-                              alteracao.status === "active" ? "bg-blue-500" : "bg-gray-500"
-                            }`}
-                          />
+                          <div/>
+                            <span>{alteracao.timestamp}</span>
                         </div>
                       ))}
                     </div>
@@ -297,7 +295,7 @@ export default function ProjetoPage() {
                       <SelectContent>
                         {alteracoes.map((alteracao) => (
                           <SelectItem key={alteracao.id} value={`alteracao-${alteracao.id}`}>
-                            {alteracao.name}
+                            {alteracao.descricao}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -308,7 +306,7 @@ export default function ProjetoPage() {
                       </div>
                     )}
                   </div>
-
+                  
                   <div className="space-y-2">
                     <h3 className="font-medium text-gray-700">Descreva a alteração</h3>
                     <Textarea placeholder="Descrição da alteração..." className="h-20" />

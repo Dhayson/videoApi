@@ -5,7 +5,7 @@ import { useEffect, useState, forwardRef, useImperativeHandle, useRef} from "rea
 type Feedback = {
   id: number
   timestamp: number
-  message: string
+  descricao: string
 }
 
 type Props = {
@@ -44,20 +44,21 @@ export const VideoWithFeedback = forwardRef<HTMLVideoElement, Props>(({ src, fee
   return (
     <div className="relative w-full aspect-video bg-black rounded-md overflow-hidden">
       <video ref={internalRef} src={src} controls className="w-full h-full object-cover" />
-
-      {activeFeedbacks.map((f) => (
-        <div
-          key={f.id}
-          className="absolute bg-white shadow-lg rounded px-3 py-2 text-sm text-black border border-gray-200"
-          style={{
-            top: "80%",
-            left: "10%",
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          {f.message}
-        </div>
-      ))}
+      <div className="absolute top-10 left-5 space-y-2 z-50">
+        {activeFeedbacks.map((f) => (
+          <div
+            key={f.id}
+            className="bg-white shadow-lg rounded px-3 py-2 text-sm text-black border border-gray-200"
+            style={{
+              // top: "10%",
+              // left: "5%",
+              // transform: "translate(0%, 0%)",
+            }}
+          >
+            {f.descricao}
+          </div>
+        ))}
+      </div>
     </div>
   )
 })
