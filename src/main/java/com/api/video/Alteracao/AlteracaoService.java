@@ -37,6 +37,7 @@ public class AlteracaoService {
         // 1) Verifica sessão
         Optional<UUID> userIdOpt = sessaoService.verificarSessao(chaveSessao);
         if (userIdOpt.isEmpty()) {
+            System.out.println("Seção expirada criar alteração");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sessão inválida ou expirada.");
         }
         UUID userId = userIdOpt.get();
@@ -45,13 +46,6 @@ public class AlteracaoService {
         Optional<Projeto> projetoOpt = projetoRepository.findById(projetoId);
         if (projetoOpt.isEmpty() || !projetoOpt.get().getCriadoPor().getId().equals(userId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Projeto não encontrado ou acesso negado.");
-        }
-
-        // 3) Verifica se a task existe e pertence ao mesmo projeto
-        Optional<Task> taskOpt = taskRepository.findById(taskId);
-        if (taskOpt.isEmpty() || !taskOpt.get().getProjeto().getId().equals(projetoId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Task não encontrada ou não pertence ao projeto informado.");
         }
 
         // 4) Cria a alteração utilizando o timestamp enviado pelo cliente

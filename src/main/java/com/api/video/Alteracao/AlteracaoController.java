@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/alteracoes")
@@ -95,6 +96,8 @@ public class AlteracaoController {
             @RequestHeader("chaveSessao") String chaveSessao,
             @PathVariable("projetoId") UUID projetoId) {
         List<Alteracao> alteracoes = alteracaoService.buscarAlteracoesPorProjeto(chaveSessao, projetoId);
+        // Evitar comportamento recursivo:
+        alteracoes.forEach(a -> a.setProjeto(null));
         return ResponseEntity.ok(alteracoes);
     }
 }

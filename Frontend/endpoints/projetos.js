@@ -376,8 +376,13 @@ async function projectInfo(idProj) {
 // await testarEditarProjeto();
 
 // // Descomente isso para testar com o node
-// import LocalStorage from "node-localstorage";
-// const localStorage = new LocalStorage.LocalStorage("./scratch");
+if (typeof window === "undefined") {
+  var localStorage2;
+  // Estamos no Node.js
+  import("node-localstorage").then(({ LocalStorage: LS }) => {
+    localStorage2 = new LS("./scratch");
+  });
+}
 
 export {
   criarProjeto,

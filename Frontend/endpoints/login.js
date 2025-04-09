@@ -27,11 +27,19 @@ async function efetuarLogin(user, senha) {
 }
 
 function setSessionId(session_id) {
-  localStorage.setItem("sessionID", session_id);
+  if (typeof window === "undefined") {
+    localStorage2.setItem("sessionID", session_id);
+  } else {
+    localStorage.setItem("sessionID", session_id);
+  }
 }
 
 function getSessionId() {
-  return localStorage.getItem("sessionID");
+  if (typeof window === "undefined") {
+    return localStorage2.getItem("sessionID");
+  } else {
+    return localStorage.getItem("sessionID");
+  }
 }
 
 async function clientInfo() {
@@ -112,9 +120,13 @@ async function testarLogin() {
 export { efetuarLogin, getSessionId, setSessionId, clientInfo };
 
 // // // Descomente isso para testar com o node
-// import LocalStorage from "node-localstorage";
-// const localStorage = new LocalStorage.LocalStorage("./scratch");
-
+if (typeof window === "undefined") {
+  var localStorage2;
+  // Estamos no Node.js
+  import("node-localstorage").then(({ LocalStorage: LS }) => {
+    localStorage2 = new LS("./scratch");
+  });
+}
 // // Chamar a função de teste para executar o login
 // await testarLogin();
 // await testarClientInfo();
