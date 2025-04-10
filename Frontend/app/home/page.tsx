@@ -21,16 +21,16 @@ const mockProjects = [
 ]
 
 const mockFeedbacks = [
-  {
-    id: 1,
-    timestamp: 3,
-    message: "Corrigir essa fala",
-  },
-  {
-    id: 2,
-    timestamp: 9,
-    message: "Adicionar legenda aqui",
-  }
+  // {
+  //   id: 1,
+  //   timestamp: 3,
+  //   message: "Corrigir essa fala",
+  // },
+  // {
+  //   id: 2,
+  //   timestamp: 9,
+  //   message: "Adicionar legenda aqui",
+  // }
 ]
 
 
