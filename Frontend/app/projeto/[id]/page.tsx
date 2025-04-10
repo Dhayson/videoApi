@@ -75,7 +75,7 @@ export default function ProjetoPage() {
       descricao,
       prioridade,
       dataEntrega.toString(),
-      projectId
+      projectId,
     ).then(
       Resposta => {
         console.log(Resposta)
@@ -258,20 +258,12 @@ export default function ProjetoPage() {
                 onChange={(e) => setDescricao(e.target.value)}
               />
 
-              <div>
-              <h1>Status:</h1>
-              <select value={status} onChange={(e) => setStatus(e.target.value)}>
-                <option value="pendente">Pendente</option>
-                <option value="em_andamento">Em andamento</option>
-                <option value="concluida">Concluída</option>
-                </select>
-              </div>
 
               <div>
               <h1>Prioridade:</h1>
               <select value={prioridade} onChange={(e) => setPrioridade(e.target.value)}>
-                <option value="LOW">MEDIUM</option>
-                <option value="MEDIUM">LOW</option>
+                <option value="MEDIUM">MEDIUM</option>
+                <option value="LOW">LOW</option>
                 <option value="HIGH">HIGH</option>
                 </select>
               </div>
