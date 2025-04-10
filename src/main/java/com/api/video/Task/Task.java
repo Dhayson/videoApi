@@ -31,6 +31,9 @@ public class Task {
     @Column(nullable = false)
     private Prioridade prioridade;
 
+    @Column(nullable = true)
+    private String status;
+
     @ManyToOne
     @JoinColumn(name = "projeto_id", nullable = false)
     @JsonIgnore

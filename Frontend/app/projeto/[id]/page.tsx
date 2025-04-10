@@ -232,9 +232,9 @@ export default function ProjetoPage() {
               <div>
               <h1>Prioridade:</h1>
               <select value={prioridade} onChange={(e) => setPrioridade(e.target.value)}>
-                <option value="baixa">MEDIUM</option>
-                <option value="media">LOW</option>
-                <option value="alta">HIGH</option>
+                <option value="LOW">MEDIUM</option>
+                <option value="MEDIUM">LOW</option>
+                <option value="HIGH">HIGH</option>
                 </select>
               </div>
 
@@ -266,20 +266,27 @@ export default function ProjetoPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-4 text-sm font-medium text-gray-500 mb-2">
+            <div className="grid grid-cols-6 text-sm font-medium text-gray-500 mb-2">
               <div className="col-span-2">Nome da Task</div>
               <div className="text-center">Data de entrega</div>
+              <div className="text-center">Prioridade</div>
               <div className="text-center">Status</div>
+              <div className="text-center">Deletar</div>
             </div>
 
             <div className="scroll-slim max-h-[610px] overflow-y-auto space-y-2 pr-1">
               {filteredTasks.map((task) => (
-                <div key={task.id} className="grid grid-cols-4 items-center py-2 border-b border-gray-100">
+                <div key={task.id} className="grid grid-cols-6 items-center py-2 border-b border-gray-100">
                   <div className="col-span-2 text-sm">{task.titulo}</div>
                   <div className="text-center text-sm">{task.dataEntrega}</div>
+                  <div className="text-center text-sm">
+                    {`${task.prioridade}`}
+                  </div>
                   <div className="flex justify-center items-center space-x-2">
-                    <div className={`h-4 w-4 rounded-full ${task.status === "active" ? "bg-blue-500" : "bg-gray-500"}`} />
-                    <button onClick={() => handleRemoveTask(task.id)} className="text-gray-400 hover:text-red-500">
+                    {`${task.status}`}
+                  </div>
+                  <div className="flex justify-center items-center space-x-2">
+                  <button onClick={() => handleRemoveTask(task.id)} className="text-gray-400 hover:text-red-500">
                       <Trash2 size={16} />
                     </button>
                   </div>
