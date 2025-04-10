@@ -45,7 +45,7 @@ export function ProjectCard({
       </CardHeader>
 
       <CardContent className="flex-1 flex flex-col justify-between">
-        <div className="flex-1 rounded-md overflow-hidden bg-black mb-2">
+        <div className="flex-1 rounded-md overflow-hidden mb-2">
           {isClient && (
             <VideoWithFeedback src={videoSrc} feedbacks={feedbacks}/>
           )}

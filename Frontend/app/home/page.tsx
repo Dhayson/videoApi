@@ -145,32 +145,9 @@ export default function HomePage() {
 
         {/* Coluna da direita */}
         <div className="md:col-span-2 flex flex-col gap-4 h-full">
-          {/* Bloco de estatísticas */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <Logo className="h-8 w-8" />
-                <CardTitle className="text-xl text-blue-600">Olá {nome_user}</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Card className="bg-gray-100">
-                <CardContent className="p-4">
-                  <h3 className="font-medium mb-2">Estatísticas</h3>
-                  <div className="space-y-1 text-sm">
-                    {/*Isso pode ser uma query na database; porém, é muito cosmético e não essencial*/}
-                    <p>Número total de projetos concluídos</p>
-                    <p>Número total de empresas parceiras</p>
-                    <p>Taxa de engajamento</p>
-                    <p>Número de visualizações</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </CardContent>
-          </Card>
 
           {/* Bloco de destaque colado abaixo */}
-          <Card className="flex-1 flex flex-col">
+          <Card className="flex-1 flex flex-col max-h-[520px]">
             <CardHeader>
               <CardTitle className="text-xl font-medium text-gray-700">Projetos de destaque</CardTitle>
             </CardHeader>
