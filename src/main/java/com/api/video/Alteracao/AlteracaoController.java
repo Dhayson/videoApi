@@ -42,6 +42,7 @@ public class AlteracaoController {
         private String descricao;
         private LocalDate dataAlteracao;
         private UUID taskId;
+        private int timestamp;  // novo campo para receber o valor do cliente
 
         public String getDescricao() { return descricao; }
         public void setDescricao(String descricao) { this.descricao = descricao; }
@@ -51,6 +52,10 @@ public class AlteracaoController {
 
         public UUID getTaskId() { return taskId; }
         public void setTaskId(UUID taskId) { this.taskId = taskId; }
+
+
+        public int getTimestamp() { return timestamp; }
+        public void setTimestamp(int timestamp) { this.timestamp = timestamp; }
     }
 
     @PostMapping("/criar")
@@ -78,7 +83,8 @@ public class AlteracaoController {
                 alteracaoId,
                 dto.getDescricao(),
                 dto.getDataAlteracao(),
-                dto.getTaskId()
+                dto.getTaskId(),
+                dto.getTimestamp()
         );
         return ResponseEntity.ok("Alteração atualizada com sucesso!");
     }

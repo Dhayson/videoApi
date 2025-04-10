@@ -326,7 +326,61 @@ async function testarListarAlteracoesPorProjeto() {
   }
 }
 
-export { criarAlteracao, listarAlteracoesPorProjeto };
+async function atualizarAlteracao(
+  projetoId,
+  alteracaoId,
+  timestamp,
+  descricao
+) {
+  const chaveSessao = getSessionId();
+  const url = `http://localhost:8080/api/v1/alteracoes/${alteracaoId}`;
+  const headers = {
+    chaveSessao: chaveSessao,
+    "Content-Type": "application/json",
+  };
+  const body = JSON.stringify({
+    projetoId: projetoId,
+    taskId: null,
+    timestamp: timestamp,
+    descricao: descricao,
+  });
+
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: headers,
+      body: body,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Erro ao atualizar alteração:", errorText);
+      return { sucesso: false, erro: errorText };
+    }
+
+    const responseText = await response.text();
+    console.log("Alteração atualizada:", responseText);
+    const idMatch = responseText.match(/ID: ([a-f0-9-]+)/); // Supondo que a resposta de sucesso também inclua um ID
+    const alteracaoId = idMatch ? idMatch[1] : null;
+    return { sucesso: true, mensagem: responseText, id: alteracaoId };
+  } catch (error) {
+    console.error(
+      "Erro ao realizar a requisição de atualização de alteração:",
+      error
+    );
+    return {
+      sucesso: false,
+      erro: error.message || "Erro desconhecido ao atualizar alteração.",
+    };
+  }
+}
+
+export {
+  criarAlteracao,
+  listarAlteracoesPorProjeto,
+  deletarAlteracao,
+  atualizarAlteracao,
+};
 
 // // // Descomente isso para testar com o node
 

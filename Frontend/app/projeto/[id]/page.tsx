@@ -12,7 +12,7 @@ import { MainLayout } from "@/components/main-layout"
 import { VideoWithFeedback } from "@/components/video-with-feedback"
 import { criarTask, deletarTask, listarTasksPorProjeto} from "../../../endpoints/tasks"
 import { projectInfo } from "../../../endpoints/projetos.js"
-import { listarAlteracoesPorProjeto, criarAlteracao} from "../../../endpoints/alteracao"
+import { listarAlteracoesPorProjeto, criarAlteracao, deletarAlteracao, atualizarAlteracao} from "../../../endpoints/alteracao"
 
 const mockTasks = [
   // { id: 1, titulo: "Nome da task 1", date: "10/07/2023", status: "active" },
@@ -32,11 +32,27 @@ export default function ProjetoPage() {
   const [tasks, setTasks] = useState(mockTasks)
   const [alteracoes, setAlteracoes] = useState(mockAlteracoes)
   const [selectedAlteracao, setSelectedAlteracao] = useState<string | null>(null)
+  const [currentAlteracaoDesc, setCurrentAlteracaoDesc] = useState("")
+  const [currentAlteracaoTimestamp, setCurrentAlteracaoTimestamp] = useState("")
+  const [enableEditarAlteracao, setEnableEditarAlteracao] = useState(false)
   const [newAlteracaoText, setNewFeedbackText] = useState("")
   const videoRef = useRef<HTMLVideoElement>(null)
 
+  function setCurrentAlteracaoDescCond(e) {
+    if (enableEditarAlteracao) {
+      setCurrentAlteracaoDesc(e)
+    }
+  }
 
-  const handleSubmit = async (e) => {
+  function setAlteracao(e) {
+    const [id, descricao, timestamp] = e.split("|");
+    console.log(timestamp)
+    setSelectedAlteracao(id);
+    setCurrentAlteracaoDesc(descricao);
+    setCurrentAlteracaoTimestamp(timestamp)
+  }
+
+  const handleSubmitTask = async (e) => {
     e.preventDefault();
     console.log(dataEntrega)
     criarTask(
@@ -120,6 +136,12 @@ export default function ProjetoPage() {
     deletarTask(id)
   }
 
+  function handleRemoveAlteracao() {
+    console.log("Deletando alteração", selectedAlteracao)
+    setAlteracoes(alteracoes.filter((alteracoes) => alteracoes.id !== selectedAlteracao))
+    deletarAlteracao(selectedAlteracao)
+  }
+
   const [mostrarForm, setMostrarForm] = useState(false);
 
   const handleCreateTask = () => {
@@ -143,12 +165,31 @@ export default function ProjetoPage() {
     )
   }
 
+  const handlePatchAlteracao = () => {
+    if (!videoRef.current) return
+    const id = selectedAlteracao;
+    const descricao = currentAlteracaoDesc;
+    const timestamp = currentAlteracaoTimestamp;
+    console.log(timestamp)
+    atualizarAlteracao(projectId, id, timestamp, descricao).then(
+      res => {
+        if (res.sucesso) {
+          setNewFeedbackText("")
+          updateAlteracoes()
+        }
+        else {
+          window.alert("Erro ao criar feedback")
+        }
+      }
+    )
+  }
+
   return (
     <MainLayout>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
         {mostrarForm && (
           <div className="modal" >
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <form onSubmit={handleSubmitTask} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <h2>Nova Task</h2>
 
               <input
@@ -230,11 +271,14 @@ export default function ProjetoPage() {
                 </div>
               ))}
             </div>
-        </CardContent>
-          <Button onClick={handleCreateTask} className="w-full mt-4 bg-blue-500 hover:bg-blue-600">
-            Criar nova task
-            <Plus className="h-4 w-4 ml-1" />
-          </Button>
+            
+          </CardContent>
+          {!mostrarForm && (
+            <Button onClick={handleCreateTask} className="w-full mt-4 bg-blue-500 hover:bg-blue-600">
+              Criar nova task
+              <Plus className="h-4 w-4 ml-1" />
+            </Button>
+          )}
         </Card>
 
         <div className="space-y-6">
@@ -288,13 +332,13 @@ export default function ProjetoPage() {
                 <div className="flex flex-col justify-between h-[280px]">
                   <div className="space-y-2">
                     <h3 className="font-medium text-gray-700">Selecione a alteração</h3>
-                    <Select onValueChange={setSelectedAlteracao}>
+                    <Select onValueChange={(e) => setAlteracao(e)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione..." />
                       </SelectTrigger>
                       <SelectContent>
                         {alteracoes.map((alteracao) => (
-                          <SelectItem key={alteracao.id} value={`alteracao-${alteracao.id}`}>
+                          <SelectItem key={alteracao.id} value={`${alteracao.id}|${alteracao.descricao}|${alteracao.timestamp}`} >
                             {alteracao.descricao}
                           </SelectItem>
                         ))}
@@ -308,18 +352,32 @@ export default function ProjetoPage() {
                   </div>
                   
                   <div className="space-y-2">
-                    <h3 className="font-medium text-gray-700">Descreva a alteração</h3>
-                    <Textarea placeholder="Descrição da alteração..." className="h-20" />
+                    <h3 className="font-medium text-gray-700">Descrição da alteração</h3>
+                    <Textarea placeholder="Edite a alteração..." className="h-20"
+                      value={currentAlteracaoDesc} onChange={(e) => setCurrentAlteracaoDescCond(e.target.value)} />
                   </div>
 
                   <div className="flex justify-between items-center">
                     <Button variant="outline" className="text-blue-500 border-blue-500">
                       Enviar Arquivo
                     </Button>
-                    <Button className="bg-blue-500 hover:bg-blue-600">
+                    <Button variant="outline" className="text-gray-500 border-gray-500" onClick={handleRemoveAlteracao}>
+                      Excluir Alteração
+                      <Trash2 size={20} />
+                    </Button>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    {selectedAlteracao && (
+                    <Button variant="outline" className="text-blue-500 border-blue-500" onClick={(e) => setEnableEditarAlteracao(!enableEditarAlteracao)}>
+                      {enableEditarAlteracao ? "Desabilitar edição" : "Habilitar edição"}
+                      </Button>
+                    )}
+                    {enableEditarAlteracao && (
+                    <Button className="bg-blue-500 hover:bg-blue-600" onClick={() => handlePatchAlteracao()}>
                       Enviar
                       <ChevronRight className="h-4 w-4 ml-1" />
                     </Button>
+                    )}
                   </div>
                 </div>
               </div>

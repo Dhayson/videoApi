@@ -71,7 +71,7 @@ public class AlteracaoService {
     /**
      * Atualiza uma alteração (ex.: descrição, data, task e timestamp).
      */
-    public void atualizarAlteracao(String chaveSessao, UUID alteracaoId, String descricao, LocalDate dataAlteracao, UUID taskId) {
+    public void atualizarAlteracao(String chaveSessao, UUID alteracaoId, String descricao, LocalDate dataAlteracao, UUID taskId, int timestamp) {
         // 1) Verifica sessão
         Optional<UUID> userIdOpt = sessaoService.verificarSessao(chaveSessao);
         if (userIdOpt.isEmpty()) {
@@ -84,14 +84,14 @@ public class AlteracaoService {
         //    Abaixo, apenas chamamos o repositório.
 
         // 3) Atualiza o timestamp (exemplo: epoch time em segundos)
-        int currentTimestamp = (int) (System.currentTimeMillis() / 1000L);
+        // int currentTimestamp = (int) (System.currentTimeMillis() / 1000L);
 
         int updatedRows = alteracaoRepository.atualizarAlteracao(
                 alteracaoId,
                 descricao,
                 dataAlteracao,
                 taskId,
-                currentTimestamp,
+                timestamp,
                 userId
         );
         if (updatedRows <= 0) {
