@@ -220,6 +220,21 @@ export default function ProjetoPage() {
     )
   }
 
+  function formatarTempo(segundos) {
+  const hrs = Math.floor(segundos / 3600);
+  const mins = Math.floor((segundos % 3600) / 60);
+  const secs = segundos % 60;
+
+  const pad = (n) => String(n).padStart(2, '0');
+
+  if (hrs > 0) {
+    return `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+  } else {
+    return `${pad(mins)}:${pad(secs)}`;
+  }
+}
+
+
   return (
     <MainLayout>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
@@ -385,7 +400,7 @@ export default function ProjetoPage() {
                             <span>{alteracao.descricao}</span>
                           </span>
                           <div/>
-                            <span>{alteracao.timestamp}</span>
+                          <span>{ formatarTempo(alteracao.timestamp)}</span>
                         </div>
                       ))}
                     </div>
