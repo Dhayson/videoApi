@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
@@ -55,9 +56,21 @@ public class TaskController {
     // Endpoint para buscar as tasks de um projeto
     @GetMapping("/projeto/{projetoId}")
     public ResponseEntity<List<Task>> buscarTasksPorProjeto(
+        @RequestHeader("chaveSessao") String chaveSessao,
+        @PathVariable("projetoId") UUID projetoId) {
+            List<Task> tasks = taskService.buscarTasksPorProjeto(chaveSessao, projetoId);
+            return ResponseEntity.ok(tasks);
+        }
+        
+    // Endpoint para mudar o status das tasks
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<String> atualizarStatus(
             @RequestHeader("chaveSessao") String chaveSessao,
-            @PathVariable("projetoId") UUID projetoId) {
-        List<Task> tasks = taskService.buscarTasksPorProjeto(chaveSessao, projetoId);
-        return ResponseEntity.ok(tasks);
-    }
+            @PathVariable("id") UUID id,
+            @RequestBody Map<String, String> body) {
+        String novoStatus = body.get("status");
+        taskService.atualizarStatus(chaveSessao, id, Status.valueOf(novoStatus));
+        return ResponseEntity.ok("Status atualizado com sucesso!");
+}
+
 }

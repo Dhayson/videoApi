@@ -10,7 +10,7 @@ async function criarTask(
   projetoId
 ) {
   const session_id = getSessionId();
-  const url = "http://198.74.53.107:8080/api/v1/tasks/criar";
+  const url = "http://localhost:8080/api/v1/tasks/criar";
   const headers = {
     chaveSessao: session_id,
     "Content-Type": "application/json",
@@ -20,7 +20,7 @@ async function criarTask(
     descricao: descricao,
     prioridade: prioridade,
     dataEntrega: dataEntrega,
-    projetoId: projetoId,
+    projetoId: projetoId
   });
 
   try {
@@ -150,7 +150,7 @@ var id_meu_projeto;
 
 async function deletarTask(taskId) {
   const chaveSessao = getSessionId();
-  const url = `http://198.74.53.107:8080/api/v1/tasks/${taskId}`;
+  const url = `http://localhost:8080/api/v1/tasks/${taskId}`;
   const headers = {
     chaveSessao: chaveSessao,
   };
@@ -224,7 +224,7 @@ async function testarDeletarTask() {
 
 async function listarTasksPorProjeto(projetoId) {
   const chaveSessao = getSessionId();
-  const url = `http://198.74.53.107:8080/api/v1/tasks/projeto/${projetoId}`;
+  const url = `http://localhost:8080/api/v1/tasks/projeto/${projetoId}`;
   const headers = {
     chaveSessao: chaveSessao,
   };
@@ -330,6 +330,27 @@ async function testarListarTasksPorProjeto() {
     );
     console.error("Detalhes do erro:", resultadoListagemInexistente.erro);
   }
+}
+
+export async function atualizarStatusTask(id, novoStatus) {
+  const resposta = await fetch(
+        `http://localhost:8080/api/v1/tasks/${id}/status`,
+        {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      chaveSessao: getSessionId(), 
+    },
+    body: JSON.stringify({ status: novoStatus }),
+  });
+
+  if (!resposta.ok) {
+    const erro = await resposta.text();
+    console.error("Erro ao atualizar status:", erro);
+    return { sucesso: false, erro };
+  }
+
+  return { sucesso: true };
 }
 
 export { criarTask, deletarTask, listarTasksPorProjeto };

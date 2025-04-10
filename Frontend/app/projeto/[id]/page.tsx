@@ -10,8 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Logo } from "@/components/logo"
 import { MainLayout } from "@/components/main-layout"
 import { VideoWithFeedback } from "@/components/video-with-feedback"
-import { criarTask, deletarTask, listarTasksPorProjeto} from "../../../endpoints/tasks"
-import { projectInfo, editarProjeto } from "../../../endpoints/projetos.js"
+import { criarTask, deletarTask, listarTasksPorProjeto, atualizarStatusTask} from "../../../endpoints/tasks"
+import { projectInfo } from "../../../endpoints/projetos.js"
 import { listarAlteracoesPorProjeto, criarAlteracao, deletarAlteracao, atualizarAlteracao} from "../../../endpoints/alteracao"
 
 const mockTasks = [
@@ -27,42 +27,29 @@ const mockAlteracoes = [
 export default function ProjetoPage() {
   const [projectId, setProjectId] = useState("")
   const [projectNome, setProjectNome] = useState("")
-  const [projectDesc, setProjectDesc] = useState("")
-  const [projectVideoUrl, setProjectVideoUrl] = useState(".")
+  const [projectVideoUrl, setProjectVideoUrl] = useState("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
   const [searchTerm, setSearchTerm] = useState("")
   const [tasks, setTasks] = useState(mockTasks)
   const [alteracoes, setAlteracoes] = useState(mockAlteracoes)
   const [selectedAlteracao, setSelectedAlteracao] = useState<string | null>(null)
   const [currentAlteracaoDesc, setCurrentAlteracaoDesc] = useState("")
-  const [currentAlteracaoModifiedDesc, setCurrentAlteracaoModifiedDesc] = useState("")
   const [currentAlteracaoTimestamp, setCurrentAlteracaoTimestamp] = useState("")
   const [enableEditarAlteracao, setEnableEditarAlteracao] = useState(false)
   const [newAlteracaoText, setNewFeedbackText] = useState("")
   const videoRef = useRef<HTMLVideoElement>(null)
 
-  function setCurrentAlteracaoModifiedDescCond(e) {
+  function setCurrentAlteracaoDescCond(e) {
     if (enableEditarAlteracao) {
-      setCurrentAlteracaoModifiedDesc(e)
+      setCurrentAlteracaoDesc(e)
     }
-  }
-
-  function setCurrentAlteracaoBothDesc(e) {
-    setCurrentAlteracaoDesc(e)
-    setCurrentAlteracaoModifiedDesc(e)
-  }
-
-  function resetAlteracao() {
-    setSelectedAlteracao(null)
-    setCurrentAlteracaoBothDesc("")
-    setEnableEditarAlteracao(false)
   }
 
   function setAlteracao(e) {
     const [id, descricao, timestamp] = e.split("|");
     console.log(timestamp)
     setSelectedAlteracao(id);
-    setCurrentAlteracaoBothDesc(descricao);
-    setCurrentAlteracaoTimestamp(timestamp);
+    setCurrentAlteracaoDesc(descricao);
+    setCurrentAlteracaoTimestamp(timestamp)
   }
 
   const handleSubmitTask = async (e) => {
@@ -87,25 +74,6 @@ export default function ProjetoPage() {
       }
     )
   };
-
-  const handleSubmitUrl = async (e) => {
-    e.preventDefault();
-    editarProjeto(
-      projectId,
-      projectNome,
-      projectDesc,
-      projectVideoUrl
-    ).then(
-      Resposta => {
-        console.log(Resposta)
-        if (Resposta.sucesso) {
-        }
-        else {
-          window.alert("Falha em atualizar url do vídeo")
-        }
-      }
-    )
-  }
 
   const [titulo, setTitulo] = useState('');
   const [descricao, setDescricao] = useState('');
@@ -137,6 +105,13 @@ export default function ProjetoPage() {
       }
     )
   }
+  
+  function handleChangeStatus(id: string, newStatus: string) {
+    atualizarStatusTask(id, newStatus).then((res: { sucesso: boolean }) => {
+      if (res.sucesso) updateTasks();
+      else window.alert("Erro ao atualizar status");
+    });
+  }
 
   useEffect(() => {
     if (projectId !== "") {
@@ -158,7 +133,6 @@ export default function ProjetoPage() {
         console.log("Info do projeto:", res)
         setProjectVideoUrl(res.data.urlVideo)
         setProjectNome(res.data.titulo)
-        setProjectDesc(res.data.descricao)
         console.log(res.data.urlVideo)
       }
     )
@@ -173,7 +147,6 @@ export default function ProjetoPage() {
     console.log("Deletando alteração", selectedAlteracao)
     setAlteracoes(alteracoes.filter((alteracoes) => alteracoes.id !== selectedAlteracao))
     deletarAlteracao(selectedAlteracao)
-    resetAlteracao()
   }
 
   const [mostrarForm, setMostrarForm] = useState(false);
@@ -201,9 +174,8 @@ export default function ProjetoPage() {
 
   const handlePatchAlteracao = () => {
     if (!videoRef.current) return
-    if (currentAlteracaoDesc === currentAlteracaoModifiedDesc) return
     const id = selectedAlteracao;
-    const descricao = currentAlteracaoModifiedDesc;
+    const descricao = currentAlteracaoDesc;
     const timestamp = currentAlteracaoTimestamp;
     console.log(timestamp)
     atualizarAlteracao(projectId, id, timestamp, descricao).then(
@@ -211,7 +183,6 @@ export default function ProjetoPage() {
         if (res.sucesso) {
           setNewFeedbackText("")
           updateAlteracoes()
-          resetAlteracao()
         }
         else {
           window.alert("Erro ao criar feedback")
@@ -268,9 +239,9 @@ export default function ProjetoPage() {
               <div>
               <h1>Prioridade:</h1>
               <select value={prioridade} onChange={(e) => setPrioridade(e.target.value)}>
-                <option value="LOW">MEDIUM</option>
-                <option value="MEDIUM">LOW</option>
-                <option value="HIGH">HIGH</option>
+                <option value="baixa">MEDIUM</option>
+                <option value="media">LOW</option>
+                <option value="alta">HIGH</option>
                 </select>
               </div>
 
@@ -302,27 +273,29 @@ export default function ProjetoPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-6 text-sm font-medium text-gray-500 mb-2">
+            <div className="grid grid-cols-4 text-sm font-medium text-gray-500 mb-2">
               <div className="col-span-2">Nome da Task</div>
               <div className="text-center">Data de entrega</div>
-              <div className="text-center">Prioridade</div>
               <div className="text-center">Status</div>
-              <div className="text-center">Deletar</div>
             </div>
 
             <div className="scroll-slim max-h-[610px] overflow-y-auto space-y-2 pr-1">
               {filteredTasks.map((task) => (
-                <div key={task.id} className="grid grid-cols-6 items-center py-2 border-b border-gray-100">
+                <div key={task.id} className="grid grid-cols-4 items-center py-2 border-b border-gray-100">
                   <div className="col-span-2 text-sm">{task.titulo}</div>
                   <div className="text-center text-sm">{task.dataEntrega}</div>
-                  <div className="text-center text-sm">
-                    {`${task.prioridade}`}
-                  </div>
                   <div className="flex justify-center items-center space-x-2">
-                    {`${task.status}`}
-                  </div>
-                  <div className="flex justify-center items-center space-x-2">
-                  <button onClick={() => handleRemoveTask(task.id)} className="text-gray-400 hover:text-red-500">
+                    <select
+                      value={task.status}
+                      onChange={(e) => handleChangeStatus(task.id, e.target.value)}
+                      className="text-sm px-2 py-1 border rounded"
+                    >
+                      <option value="PENDENTE">Pendente</option>
+                      <option value="EM_ANDAMENTO">Em andamento</option>
+                      <option value="CONCLUIDA">Concluída</option>
+                      
+                    </select>
+                    <button onClick={() => handleRemoveTask(task.id)} className="text-gray-400 hover:text-red-500">
                       <Trash2 size={16} />
                     </button>
                   </div>
@@ -337,26 +310,7 @@ export default function ProjetoPage() {
               <Plus className="h-4 w-4 ml-1" />
             </Button>
           )}
-          <CardHeader>
-            <CardTitle className="text-xl text-gray-700">Mudar vídeo do projeto</CardTitle>
-            <div className="flex items-center space-x-2 mt-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                <Input
-                  placeholder="Cole aqui a url"
-                  className="pl-8"
-                  value={projectVideoUrl}
-                  onChange={(e) => setProjectVideoUrl(e.target.value)}
-                />
-              </div>
-            </div>
-            <Button onClick={handleSubmitUrl} className="w-full mt-4 bg-blue-500 hover:bg-blue-600">
-              Mudar url do vídeo
-              <Plus className="h-4 w-4 ml-1" />
-            </Button>
-          </CardHeader>
         </Card>
-        
 
         <div className="space-y-6">
           <Card>
@@ -431,16 +385,17 @@ export default function ProjetoPage() {
                   <div className="space-y-2">
                     <h3 className="font-medium text-gray-700">Descrição da alteração</h3>
                     <Textarea placeholder="Edite a alteração..." className="h-20"
-                      value={currentAlteracaoModifiedDesc} onChange={(e) => setCurrentAlteracaoModifiedDescCond(e.target.value)} />
+                      value={currentAlteracaoDesc} onChange={(e) => setCurrentAlteracaoDescCond(e.target.value)} />
                   </div>
 
                   <div className="flex justify-between items-center">
-                    {selectedAlteracao && (
-                      <Button variant="outline" className="text-gray-500 border-gray-500" onClick={handleRemoveAlteracao}>
-                        Excluir Alteração
-                        <Trash2 size={20} />
-                      </Button>
-                    )}
+                    <Button variant="outline" className="text-blue-500 border-blue-500">
+                      Enviar Arquivo
+                    </Button>
+                    <Button variant="outline" className="text-gray-500 border-gray-500" onClick={handleRemoveAlteracao}>
+                      Excluir Alteração
+                      <Trash2 size={20} />
+                    </Button>
                   </div>
                   <div className="flex justify-between items-center">
                     {selectedAlteracao && (
@@ -448,9 +403,9 @@ export default function ProjetoPage() {
                       {enableEditarAlteracao ? "Desabilitar edição" : "Habilitar edição"}
                       </Button>
                     )}
-                    {enableEditarAlteracao && currentAlteracaoDesc !== currentAlteracaoModifiedDesc && (
+                    {enableEditarAlteracao && (
                     <Button className="bg-blue-500 hover:bg-blue-600" onClick={() => handlePatchAlteracao()}>
-                      Enviar alteração
+                      Enviar
                       <ChevronRight className="h-4 w-4 ml-1" />
                     </Button>
                     )}

@@ -16,17 +16,18 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
     @Transactional
     @Modifying
     @Query(value = """
-                   INSERT INTO tasks (id, titulo, descricao, prioridade, projeto_id, data_criacao, data_entrega, responsavel_id)
-                   VALUES (:id, :titulo, :descricao, :prioridade, :projetoId, :dataCriacao, :dataEntrega, :responsavelId)
-            """, nativeQuery = true)
+   INSERT INTO tasks (id, titulo, descricao, prioridade, projeto_id, data_criacao, data_entrega, responsavel_id, status)
+   VALUES (:id, :titulo, :descricao, :prioridade, :projetoId, :dataCriacao, :dataEntrega, :responsavelId, :status) """, nativeQuery = true)
     int criarTask(@Param("id") UUID id,
-            @Param("titulo") String titulo,
-            @Param("descricao") String descricao,
-            @Param("prioridade") String prioridade,
-            @Param("projetoId") UUID projetoId,
-            @Param("dataCriacao") LocalDate dataCriacao,
-            @Param("dataEntrega") LocalDate dataEntrega,
-            @Param("responsavelId") UUID responsavelId);
+                  @Param("titulo") String titulo,
+                  @Param("descricao") String descricao,
+                  @Param("prioridade") String prioridade,
+                  @Param("projetoId") UUID projetoId,
+                  @Param("dataCriacao") LocalDate dataCriacao,
+                  @Param("dataEntrega") LocalDate dataEntrega,
+                  @Param("responsavelId") UUID responsavelId,
+                  @Param("status") String status);
+
 
     @Transactional
     @Modifying

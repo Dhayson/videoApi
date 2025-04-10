@@ -31,8 +31,14 @@ public class Task {
     @Column(nullable = false)
     private Prioridade prioridade;
 
+<<<<<<< HEAD
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
+=======
     @Column(nullable = true)
     private String status;
+>>>>>>> upstream/main
 
     @ManyToOne
     @JoinColumn(name = "projeto_id", nullable = false)
