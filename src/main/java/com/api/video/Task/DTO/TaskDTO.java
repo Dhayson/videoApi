@@ -1,6 +1,8 @@
 package com.api.video.Task.DTO;
 
 import com.api.video.Task.Prioridade;
+import com.api.video.Task.Status;
+
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -11,6 +13,7 @@ public class TaskDTO {
     private Prioridade prioridade;
     private LocalDate dataEntrega;
     private UUID projetoId;
+    private Status status;
 
     // Getters e Setters
     public String getTitulo() {
@@ -52,4 +55,9 @@ public class TaskDTO {
     public void setProjetoId(UUID projetoId) {
         this.projetoId = projetoId;
     }
+
+
+    public Status getStatus() { return status; }
+    public void setStatus(Status status) { this.status = status; }
+
 }

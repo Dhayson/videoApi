@@ -48,7 +48,9 @@ public class TaskService {
                 projetoId,
                 LocalDate.now(),
                 dataEntrega,
-                userId // usuário logado como responsavel
+                userId, // usuário logado como responsavel
+                Status.PENDENTE.name() // novo campo
+
         );
         if (rows > 0) {
             return taskId;
@@ -99,4 +101,22 @@ public class TaskService {
         }
         return taskRepository.buscarTasksPorProjeto(projetoId, userId);
     }
+
+    public void atualizarStatus(String chaveSessao, UUID id, Status status) {
+        UUID userId = sessaoService.verificarSessao(chaveSessao).orElseThrow(() ->
+            new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sessão inválida")
+        );
+    
+        Task task = taskRepository.findById(id).orElseThrow(() ->
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "Task não encontrada")
+        );
+    
+        if (!task.getProjeto().getCriadoPor().getId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Sem permissão");
+        }
+    
+        task.setStatus(status);
+        taskRepository.save(task);
+    }
+    
 }
