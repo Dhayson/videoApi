@@ -1,7 +1,7 @@
 import { isNode, localStorage2 } from "./isNode.mjs";
 
 async function efetuarLogin(user, senha) {
-  const url = `http://localhost:8080/api/v1/usuario/login?user=${encodeURIComponent(
+  const url = `http://198.74.53.107:8080/api/v1/usuario/login?user=${encodeURIComponent(
     user
   )}&senha=${encodeURIComponent(senha)}`;
 
@@ -46,7 +46,7 @@ function getSessionId() {
 
 async function clientInfo() {
   const session_id = getSessionId();
-  const url = `http://localhost:8080/api/v1/usuario/getinfo?keySessao=${encodeURIComponent(
+  const url = `http://198.74.53.107:8080/api/v1/usuario/getinfo?keySessao=${encodeURIComponent(
     session_id
   )}`;
   try {

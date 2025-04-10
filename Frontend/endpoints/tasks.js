@@ -10,7 +10,7 @@ async function criarTask(
   projetoId
 ) {
   const session_id = getSessionId();
-  const url = "http://localhost:8080/api/v1/tasks/criar";
+  const url = "http://198.74.53.107:8080/api/v1/tasks/criar";
   const headers = {
     chaveSessao: session_id,
     "Content-Type": "application/json",
@@ -150,7 +150,7 @@ var id_meu_projeto;
 
 async function deletarTask(taskId) {
   const chaveSessao = getSessionId();
-  const url = `http://localhost:8080/api/v1/tasks/${taskId}`;
+  const url = `http://198.74.53.107:8080/api/v1/tasks/${taskId}`;
   const headers = {
     chaveSessao: chaveSessao,
   };
@@ -224,7 +224,7 @@ async function testarDeletarTask() {
 
 async function listarTasksPorProjeto(projetoId) {
   const chaveSessao = getSessionId();
-  const url = `http://localhost:8080/api/v1/tasks/projeto/${projetoId}`;
+  const url = `http://198.74.53.107:8080/api/v1/tasks/projeto/${projetoId}`;
   const headers = {
     chaveSessao: chaveSessao,
   };

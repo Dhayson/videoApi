@@ -8,7 +8,7 @@ async function cadastrarCliente(
   plataformas
 ) {
   //const url = "http://198.74.53.107:8080/api/v1/usuario/cadastrocliente";
-  const url = "http://localhost:8080/api/v1/usuario/cadastrocliente";
+  const url = "http://198.74.53.107:8080/api/v1/usuario/cadastrocliente";
   const headers = {
     "Content-Type": "application/json",
   };

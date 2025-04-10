@@ -2,7 +2,7 @@ import { getSessionId, setSessionId, efetuarLogin } from "./login.js";
 import { isNode } from "./isNode.mjs";
 
 async function criarProjeto(nome, url_proj, descricao) {
-  const url = "http://localhost:8080/api/v1/projetos/criar";
+  const url = "http://198.74.53.107:8080/api/v1/projetos/criar";
 
   const session_id = getSessionId();
   const headers = {
@@ -102,7 +102,7 @@ async function testarCriarProjeto() {
 
 async function deletarProjeto(projetoId) {
   const chaveSessao = getSessionId();
-  const url = `http://localhost:8080/api/v1/projetos/${projetoId}`;
+  const url = `http://198.74.53.107:8080/api/v1/projetos/${projetoId}`;
   const headers = {
     chaveSessao: chaveSessao,
   };
@@ -179,7 +179,7 @@ async function testarDeletarProjeto() {
 
 async function listarProjetosDoUsuario() {
   const chaveSessao = getSessionId();
-  const url = "http://localhost:8080/api/v1/projetos/get";
+  const url = "http://198.74.53.107:8080/api/v1/projetos/get";
   const headers = {
     chaveSessao: chaveSessao,
   };
@@ -241,7 +241,7 @@ async function testarListarProjetos() {
 
 async function editarProjeto(projetoId, nome, descricao, urlVideo) {
   const chaveSessao = getSessionId();
-  const url = `http://localhost:8080/api/v1/projetos/${projetoId}`;
+  const url = `http://198.74.53.107:8080/api/v1/projetos/${projetoId}`;
   const headers = {
     chaveSessao: chaveSessao,
     "Content-Type": "application/json",
@@ -335,7 +335,7 @@ async function testarEditarProjeto() {
 }
 
 async function projectInfo(idProj) {
-  const url = `http://localhost:8080/api/v1/projetos/getProjeto/${encodeURIComponent(
+  const url = `http://198.74.53.107:8080/api/v1/projetos/getProjeto/${encodeURIComponent(
     idProj
   )}`;
   const chaveSessao = getSessionId();

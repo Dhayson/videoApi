@@ -7,7 +7,7 @@ var id_projeto;
 
 async function criarAlteracao(projetoId, timestamp, descricao) {
   const chaveSessao = getSessionId();
-  const url = "http://localhost:8080/api/v1/alteracoes/criar";
+  const url = "http://198.74.53.107:8080/api/v1/alteracoes/criar";
   const headers = {
     chaveSessao: chaveSessao,
     "Content-Type": "application/json",
@@ -154,7 +154,7 @@ async function testarCriarAlteracao() {
 
 async function deletarAlteracao(alteracaoId) {
   const chaveSessao = getSessionId();
-  const url = `http://localhost:8080/api/v1/alteracoes/${alteracaoId}`;
+  const url = `http://198.74.53.107:8080/api/v1/alteracoes/${alteracaoId}`;
   const headers = {
     chaveSessao: chaveSessao,
   };
@@ -234,7 +234,7 @@ async function testarDeletarAlteracao() {
 
 async function listarAlteracoesPorProjeto(projetoId) {
   const chaveSessao = await getSessionId();
-  const url = `http://localhost:8080/api/v1/alteracoes/projeto/${projetoId}`;
+  const url = `http://198.74.53.107:8080/api/v1/alteracoes/projeto/${projetoId}`;
   const headers = {
     chaveSessao: chaveSessao,
   };
@@ -333,7 +333,7 @@ async function atualizarAlteracao(
   descricao
 ) {
   const chaveSessao = getSessionId();
-  const url = `http://localhost:8080/api/v1/alteracoes/${alteracaoId}`;
+  const url = `http://198.74.53.107:8080/api/v1/alteracoes/${alteracaoId}`;
   const headers = {
     chaveSessao: chaveSessao,
     "Content-Type": "application/json",
