@@ -33,23 +33,35 @@ export default function ProjetoPage() {
   const [alteracoes, setAlteracoes] = useState(mockAlteracoes)
   const [selectedAlteracao, setSelectedAlteracao] = useState<string | null>(null)
   const [currentAlteracaoDesc, setCurrentAlteracaoDesc] = useState("")
+  const [currentAlteracaoModifiedDesc, setCurrentAlteracaoModifiedDesc] = useState("")
   const [currentAlteracaoTimestamp, setCurrentAlteracaoTimestamp] = useState("")
   const [enableEditarAlteracao, setEnableEditarAlteracao] = useState(false)
   const [newAlteracaoText, setNewFeedbackText] = useState("")
   const videoRef = useRef<HTMLVideoElement>(null)
 
-  function setCurrentAlteracaoDescCond(e) {
+  function setCurrentAlteracaoModifiedDescCond(e) {
     if (enableEditarAlteracao) {
-      setCurrentAlteracaoDesc(e)
+      setCurrentAlteracaoModifiedDesc(e)
     }
+  }
+
+  function setCurrentAlteracaoBothDesc(e) {
+    setCurrentAlteracaoDesc(e)
+    setCurrentAlteracaoModifiedDesc(e)
+  }
+
+  function resetAlteracao() {
+    setSelectedAlteracao(null)
+    setCurrentAlteracaoBothDesc("")
+    setEnableEditarAlteracao(false)
   }
 
   function setAlteracao(e) {
     const [id, descricao, timestamp] = e.split("|");
     console.log(timestamp)
     setSelectedAlteracao(id);
-    setCurrentAlteracaoDesc(descricao);
-    setCurrentAlteracaoTimestamp(timestamp)
+    setCurrentAlteracaoBothDesc(descricao);
+    setCurrentAlteracaoTimestamp(timestamp);
   }
 
   const handleSubmitTask = async (e) => {
@@ -140,6 +152,7 @@ export default function ProjetoPage() {
     console.log("Deletando alteração", selectedAlteracao)
     setAlteracoes(alteracoes.filter((alteracoes) => alteracoes.id !== selectedAlteracao))
     deletarAlteracao(selectedAlteracao)
+    resetAlteracao()
   }
 
   const [mostrarForm, setMostrarForm] = useState(false);
@@ -167,8 +180,9 @@ export default function ProjetoPage() {
 
   const handlePatchAlteracao = () => {
     if (!videoRef.current) return
+    if (currentAlteracaoDesc === currentAlteracaoModifiedDesc) return
     const id = selectedAlteracao;
-    const descricao = currentAlteracaoDesc;
+    const descricao = currentAlteracaoModifiedDesc;
     const timestamp = currentAlteracaoTimestamp;
     console.log(timestamp)
     atualizarAlteracao(projectId, id, timestamp, descricao).then(
@@ -176,6 +190,7 @@ export default function ProjetoPage() {
         if (res.sucesso) {
           setNewFeedbackText("")
           updateAlteracoes()
+          resetAlteracao()
         }
         else {
           window.alert("Erro ao criar feedback")
@@ -354,17 +369,19 @@ export default function ProjetoPage() {
                   <div className="space-y-2">
                     <h3 className="font-medium text-gray-700">Descrição da alteração</h3>
                     <Textarea placeholder="Edite a alteração..." className="h-20"
-                      value={currentAlteracaoDesc} onChange={(e) => setCurrentAlteracaoDescCond(e.target.value)} />
+                      value={currentAlteracaoModifiedDesc} onChange={(e) => setCurrentAlteracaoModifiedDescCond(e.target.value)} />
                   </div>
 
                   <div className="flex justify-between items-center">
                     <Button variant="outline" className="text-blue-500 border-blue-500">
                       Enviar Arquivo
                     </Button>
-                    <Button variant="outline" className="text-gray-500 border-gray-500" onClick={handleRemoveAlteracao}>
-                      Excluir Alteração
-                      <Trash2 size={20} />
-                    </Button>
+                    {selectedAlteracao && (
+                      <Button variant="outline" className="text-gray-500 border-gray-500" onClick={handleRemoveAlteracao}>
+                        Excluir Alteração
+                        <Trash2 size={20} />
+                      </Button>
+                    )}
                   </div>
                   <div className="flex justify-between items-center">
                     {selectedAlteracao && (
