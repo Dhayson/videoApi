@@ -77,7 +77,7 @@ public interface ProjetoRepository extends JpaRepository<Projeto, UUID> {
 """)
     List<Projeto> findProjetosByCliente(@Param("clienteId") UUID clienteId);
 
-    @Query("SELECT new com.api.video.Projeto.DTO.ProjetoGetDTO(p.descricao, p.urlVideo) " +
+    @Query("SELECT new com.api.video.Projeto.DTO.ProjetoGetDTO(p.descricao, p.urlVideo, p.nome) " +
             "FROM Projeto p WHERE p.id = :id AND p.criadoPor.id = :clienteId")
     Optional<ProjetoGetDTO> buscarDescricaoUrlPorProjeto(@Param("id") UUID id, @Param("clienteId") UUID clienteId);
 
