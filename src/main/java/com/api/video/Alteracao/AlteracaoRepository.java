@@ -34,7 +34,6 @@ public interface AlteracaoRepository extends JpaRepository<Alteracao, UUID> {
     @Query("""
                 UPDATE Alteracao a
                 SET a.descricao = :descricao,
-                    a.dataAlteracao = :dataAlteracao,
                     a.referenciaTask.id = :taskId,
                     a.timestamp = :timestamp
                 WHERE a.id = :alteracaoId
@@ -43,7 +42,6 @@ public interface AlteracaoRepository extends JpaRepository<Alteracao, UUID> {
     int atualizarAlteracao(
             @Param("alteracaoId") UUID alteracaoId,
             @Param("descricao") String descricao,
-            @Param("dataAlteracao") LocalDate dataAlteracao,
             @Param("taskId") UUID taskId,
             @Param("timestamp") int timestamp,
             @Param("userId") UUID userId);

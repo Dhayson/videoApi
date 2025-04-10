@@ -71,7 +71,7 @@ public class AlteracaoService {
     /**
      * Atualiza uma alteração (ex.: descrição, data, task e timestamp).
      */
-    public void atualizarAlteracao(String chaveSessao, UUID alteracaoId, String descricao, LocalDate dataAlteracao, UUID taskId, int timestamp) {
+    public void atualizarAlteracao(String chaveSessao, UUID alteracaoId, String descricao, UUID taskId, int timestamp) {
         // 1) Verifica sessão
         Optional<UUID> userIdOpt = sessaoService.verificarSessao(chaveSessao);
         if (userIdOpt.isEmpty()) {
@@ -89,7 +89,6 @@ public class AlteracaoService {
         int updatedRows = alteracaoRepository.atualizarAlteracao(
                 alteracaoId,
                 descricao,
-                dataAlteracao,
                 taskId,
                 timestamp,
                 userId

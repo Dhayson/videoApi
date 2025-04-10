@@ -82,7 +82,6 @@ public class AlteracaoController {
                 chaveSessao,
                 alteracaoId,
                 dto.getDescricao(),
-                dto.getDataAlteracao(),
                 dto.getTaskId(),
                 dto.getTimestamp()
         );
