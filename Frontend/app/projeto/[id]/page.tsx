@@ -11,7 +11,7 @@ import { Logo } from "@/components/logo"
 import { MainLayout } from "@/components/main-layout"
 import { VideoWithFeedback } from "@/components/video-with-feedback"
 import { criarTask, deletarTask, listarTasksPorProjeto} from "../../../endpoints/tasks"
-import { projectInfo } from "../../../endpoints/projetos.js"
+import { projectInfo, editarProjeto } from "../../../endpoints/projetos.js"
 import { listarAlteracoesPorProjeto, criarAlteracao, deletarAlteracao, atualizarAlteracao} from "../../../endpoints/alteracao"
 
 const mockTasks = [
@@ -27,7 +27,8 @@ const mockAlteracoes = [
 export default function ProjetoPage() {
   const [projectId, setProjectId] = useState("")
   const [projectNome, setProjectNome] = useState("")
-  const [projectVideoUrl, setProjectVideoUrl] = useState("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+  const [projectDesc, setProjectDesc] = useState("")
+  const [projectVideoUrl, setProjectVideoUrl] = useState(".")
   const [searchTerm, setSearchTerm] = useState("")
   const [tasks, setTasks] = useState(mockTasks)
   const [alteracoes, setAlteracoes] = useState(mockAlteracoes)
@@ -87,6 +88,25 @@ export default function ProjetoPage() {
     )
   };
 
+  const handleSubmitUrl = async (e) => {
+    e.preventDefault();
+    editarProjeto(
+      projectId,
+      projectNome,
+      projectDesc,
+      projectVideoUrl
+    ).then(
+      Resposta => {
+        console.log(Resposta)
+        if (Resposta.sucesso) {
+        }
+        else {
+          window.alert("Falha em atualizar url do vídeo")
+        }
+      }
+    )
+  }
+
   const [titulo, setTitulo] = useState('');
   const [descricao, setDescricao] = useState('');
   const [status, setStatus] = useState('pendente');
@@ -138,6 +158,7 @@ export default function ProjetoPage() {
         console.log("Info do projeto:", res)
         setProjectVideoUrl(res.data.urlVideo)
         setProjectNome(res.data.titulo)
+        setProjectDesc(res.data.descricao)
         console.log(res.data.urlVideo)
       }
     )
@@ -301,7 +322,26 @@ export default function ProjetoPage() {
               <Plus className="h-4 w-4 ml-1" />
             </Button>
           )}
+          <CardHeader>
+            <CardTitle className="text-xl text-gray-700">Mudar vídeo do projeto</CardTitle>
+            <div className="flex items-center space-x-2 mt-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                <Input
+                  placeholder="Cole aqui a url"
+                  className="pl-8"
+                  value={projectVideoUrl}
+                  onChange={(e) => setProjectVideoUrl(e.target.value)}
+                />
+              </div>
+            </div>
+            <Button onClick={handleSubmitUrl} className="w-full mt-4 bg-blue-500 hover:bg-blue-600">
+              Mudar url do vídeo
+              <Plus className="h-4 w-4 ml-1" />
+            </Button>
+          </CardHeader>
         </Card>
+        
 
         <div className="space-y-6">
           <Card>

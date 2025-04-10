@@ -11,8 +11,8 @@ async function criarProjeto(nome, url_proj, descricao) {
   };
   const body = JSON.stringify({
     nome: nome,
-    urlVideo: url_proj,
     descricao: descricao,
+    urlVideo: url_proj,
   });
 
   try {
@@ -50,7 +50,7 @@ var id_projeto_2;
 
 // Função para testar a função criarProjeto
 async function testarCriarProjeto() {
-  const usuarioTeste = "joao.silva@example.com"; // Substitua por um usuário existente para teste
+  const usuarioTeste = "joao.silva3@example.com"; // Substitua por um usuário existente para teste
   const senhaTeste = "senha123"; // Substitua pela senha correta do usuário
   const resultadoLoginSucesso = await efetuarLogin(usuarioTeste, senhaTeste);
   setSessionId(resultadoLoginSucesso.data);
@@ -239,7 +239,7 @@ async function testarListarProjetos() {
   }
 }
 
-async function editarProjeto(projetoId, nome, descricao) {
+async function editarProjeto(projetoId, nome, descricao, urlVideo) {
   const chaveSessao = getSessionId();
   const url = `http://localhost:8080/api/v1/projetos/${projetoId}`;
   const headers = {
@@ -249,6 +249,7 @@ async function editarProjeto(projetoId, nome, descricao) {
   const body = JSON.stringify({
     nome: nome,
     descricao: descricao,
+    urlVideo: urlVideo,
   });
 
   try {
@@ -294,7 +295,8 @@ async function testarEditarProjeto() {
   const resultadoEdicao = await editarProjeto(
     projetoIdParaEditar,
     novoNomeProjeto,
-    novaDescricaoProjeto
+    novaDescricaoProjeto,
+    "Exemplo de url"
   );
 
   if (resultadoEdicao.sucesso) {
@@ -315,7 +317,8 @@ async function testarEditarProjeto() {
   const resultadoEdicaoInexistente = await editarProjeto(
     projetoIdInexistente,
     nomeInexistente,
-    descricaoInexistente
+    descricaoInexistente,
+    "exemplo de url"
   );
 
   if (resultadoEdicaoInexistente.sucesso) {
@@ -365,14 +368,14 @@ async function projectInfo(idProj) {
 }
 
 if (isNode()) {
-  // Chamar a função de teste para executar a criação de projeto
-  // await testarCriarProjeto();
-  // // // Chamar a função de teste para executar a deleção de projeto
-  // await testarDeletarProjeto();
-  // // // Chamar a função de teste para executar a listagem de projetos
-  // await testarListarProjetos();
-  // // // Chamar a função de teste para executar a edição de projeto
-  // await testarEditarProjeto();
+  // // Chamar a função de teste para executar a criação de projeto
+  await testarCriarProjeto();
+  // // Chamar a função de teste para executar a deleção de projeto
+  await testarDeletarProjeto();
+  // // Chamar a função de teste para executar a listagem de projetos
+  await testarListarProjetos();
+  // // Chamar a função de teste para executar a edição de projeto
+  await testarEditarProjeto();
 }
 
 export {
