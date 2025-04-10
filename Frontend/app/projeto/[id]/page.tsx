@@ -380,9 +380,6 @@ export default function ProjetoPage() {
                   </div>
 
                   <div className="flex justify-between items-center">
-                    <Button variant="outline" className="text-blue-500 border-blue-500">
-                      Enviar Arquivo
-                    </Button>
                     {selectedAlteracao && (
                       <Button variant="outline" className="text-gray-500 border-gray-500" onClick={handleRemoveAlteracao}>
                         Excluir Alteração
@@ -396,9 +393,9 @@ export default function ProjetoPage() {
                       {enableEditarAlteracao ? "Desabilitar edição" : "Habilitar edição"}
                       </Button>
                     )}
-                    {enableEditarAlteracao && (
+                    {enableEditarAlteracao && currentAlteracaoDesc !== currentAlteracaoModifiedDesc && (
                     <Button className="bg-blue-500 hover:bg-blue-600" onClick={() => handlePatchAlteracao()}>
-                      Enviar
+                      Enviar alteração
                       <ChevronRight className="h-4 w-4 ml-1" />
                     </Button>
                     )}
