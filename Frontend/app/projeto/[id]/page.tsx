@@ -35,7 +35,8 @@ export default function ProjetoPage() {
   const [selectedAlteracao, setSelectedAlteracao] = useState<string | null>(null)
   const [currentAlteracaoDesc, setCurrentAlteracaoDesc] = useState("")
   const [currentAlteracaoModifiedDesc, setCurrentAlteracaoModifiedDesc] = useState("")
-  const [currentAlteracaoTimestamp, setCurrentAlteracaoTimestamp] = useState("")
+  const [currentAlteracaoTimestamp, setCurrentAlteracaoTimestamp] = useState(null)
+  const [currentAlteracaoModifiedTimestamp, setCurrentAlteracaoModifiedTimestamp] = useState(null)
   const [enableEditarAlteracao, setEnableEditarAlteracao] = useState(false)
   const [newAlteracaoText, setNewFeedbackText] = useState("")
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -62,7 +63,8 @@ export default function ProjetoPage() {
     console.log(timestamp)
     setSelectedAlteracao(id);
     setCurrentAlteracaoBothDesc(descricao);
-    setCurrentAlteracaoTimestamp(timestamp);
+    setCurrentAlteracaoTimestamp(parseInt(timestamp));
+    setCurrentAlteracaoModifiedTimestamp(parseInt(timestamp))
   }
 
   const handleSubmitTask = async (e) => {
@@ -201,10 +203,10 @@ export default function ProjetoPage() {
 
   const handlePatchAlteracao = () => {
     if (!videoRef.current) return
-    if (currentAlteracaoDesc === currentAlteracaoModifiedDesc) return
+    if (currentAlteracaoDesc === currentAlteracaoModifiedDesc && currentAlteracaoTimestamp === currentAlteracaoModifiedTimestamp) return
     const id = selectedAlteracao;
     const descricao = currentAlteracaoModifiedDesc;
-    const timestamp = currentAlteracaoTimestamp;
+    const timestamp = currentAlteracaoModifiedTimestamp;
     console.log(timestamp)
     atualizarAlteracao(projectId, id, timestamp, descricao).then(
       res => {
@@ -359,7 +361,7 @@ export default function ProjetoPage() {
         
 
         <div className="space-y-6">
-          <Card>
+          <Card className="min-h-[1100px]">
             <CardHeader className="flex flex-row items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Logo className="h-8 w-8" />
@@ -384,7 +386,7 @@ export default function ProjetoPage() {
                 </Button>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mt-6">
+              <div className="grid grid-cols-2 gap-4 mt-6 min-h-[300px]">
                 <div className="space-y-2">
                   <h3 className="font-medium text-gray-700">Alterações</h3>
                   <div className="bg-gray-100 rounded-lg h-[250px] overflow-hidden flex flex-col">
@@ -406,7 +408,7 @@ export default function ProjetoPage() {
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col justify-between h-[280px]">
+                <div className="flex flex-col justify-between h-[300px]">
                   <div className="space-y-2">
                     <h3 className="font-medium text-gray-700">Selecione a alteração</h3>
                     <Select onValueChange={(e) => setAlteracao(e)}>
@@ -448,10 +450,23 @@ export default function ProjetoPage() {
                       {enableEditarAlteracao ? "Desabilitar edição" : "Habilitar edição"}
                       </Button>
                     )}
-                    {enableEditarAlteracao && currentAlteracaoDesc !== currentAlteracaoModifiedDesc && (
+                    {enableEditarAlteracao &&
+                      (currentAlteracaoDesc !== currentAlteracaoModifiedDesc || currentAlteracaoTimestamp !== currentAlteracaoModifiedTimestamp)
+                      && (
                     <Button className="bg-blue-500 hover:bg-blue-600" onClick={() => handlePatchAlteracao()}>
                       Enviar alteração
                       <ChevronRight className="h-4 w-4 ml-1" />
+                    </Button>
+                    )}
+                  </div>
+                  <div className="flex justify-between items-center">
+                  {enableEditarAlteracao && (
+                    <Button className="hover:bg-blue-600" onClick={() => {
+                      if (videoRef.current !== null) {
+                        setCurrentAlteracaoModifiedTimestamp(videoRef.current.currentTime);
+                      }
+                    }}>
+                      Mudar para timestamp atual
                     </Button>
                     )}
                   </div>
